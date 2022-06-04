@@ -3,9 +3,9 @@
 
 /**
  * Imports
- * CryptoJS - Used to calculate one way hashes
+ * node:crypto - Used to calculate one way hashes
  */
-const CryptoJS = require('crypto-js');
+import * as crypto from 'node:crypto';
 
 export type MerkleDataType = string | number | boolean | object;
 
@@ -43,7 +43,7 @@ export class MerkleTree implements IMerkleTree {
      * @param values {MerkleDataType[]} - A list of values used to calculate the Merkle Root of type MerkleDataType
      * @param type {string} - The type of one way hash algorithm used to generate hashes
      */
-    constructor(values: MerkleDataType[] = [], type: string = 'SHA256') {
+    constructor(values: MerkleDataType[] = [], type: string = 'sha256') {
         this.type = type;
         this.buildTree(values);
     }
@@ -55,7 +55,7 @@ export class MerkleTree implements IMerkleTree {
      */
     public createHash(data: MerkleDataType): string {
         const dataString: string = this.convertToString(data);
-        return CryptoJS[this.type](dataString).toString();
+        return crypto.createHash(this.type).update(dataString).digest('hex');
     }
 
     /**

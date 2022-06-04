@@ -27,11 +27,11 @@ describe ('Constructs a merkle tree', () => {
         expect(tree.createHash('Test string'))
             .toBe('a3e49d843df13c2e2a7786f6ecd7e0d184f45d718d1ac1a8a63e570466e489dd');
 
-        tree = new MerkleTree([1], 'MD5');
+        tree = new MerkleTree([1], 'md5');
         expect(tree.root).toBe('c4ca4238a0b923820dcc509a6f75849b');
         expect(tree.createHash('1')).toBe('c4ca4238a0b923820dcc509a6f75849b');
 
-        tree = new MerkleTree(['Test string'], 'MD5');
+        tree = new MerkleTree(['Test string'], 'md5');
         expect(tree.root).toBe('0fd3dbec9730101bff92acc820befc34');
         expect(tree.createHash('Test string')).toBe('0fd3dbec9730101bff92acc820befc34');
     });
@@ -74,29 +74,29 @@ describe ('Constructs a merkle tree', () => {
         expect(tree.root)
             .toBe('8e5de0cb76eb9b7b420574765e9174d4fc209af474448edb733bb6cc8fc1096e');
 
-        tree = new MerkleTree([1,2], 'MD5');
+        tree = new MerkleTree([1,2], 'md5');
         expect(tree.root).toBe('302cbafc0dfbc97f30d576a6f394dad3');
 
-        tree = new MerkleTree(['Test string','More'], 'MD5');
+        tree = new MerkleTree(['Test string','More'], 'md5');
         expect(tree.root).toBe('e1bfa1951ca12b49e60324127951373a');
 
-        tree = new MerkleTree([1,2,3], 'MD5');
+        tree = new MerkleTree([1,2,3], 'md5');
         expect(tree.root).toBe('d37a60fb7556c542502509dfe4d93928');
 
-        tree = new MerkleTree(['Test string','More','stuff'], 'MD5');
+        tree = new MerkleTree(['Test string','More','stuff'], 'md5');
         expect(tree.root).toBe('8b8a56cc2e0c741c07712a76c7ccc553');
 
-        tree = new MerkleTree([1,2,3,4,5,6,7], 'MD5');
+        tree = new MerkleTree([1,2,3,4,5,6,7], 'md5');
         expect(tree.root).toBe('662d7787d650efad62a6eac2d9ce6dba');
 
-        tree = new MerkleTree(['Test string','More','stuff',44,55,66,77], 'MD5');
+        tree = new MerkleTree(['Test string','More','stuff',44,55,66,77], 'md5');
         expect(tree.root).toBe('12a8ba3a5818a326661865d327edbb10');
 
         tree = new MerkleTree(['Test string','More','Stuff',44,55,66,77,true,false,
-            {test:'this'}], 'MD5');
+            {test:'this'}], 'md5');
         expect(tree.root).toBe('a2cb7e58da10549ba35bbcecd7fe75f5');
 
-        tree = new MerkleTree(numList, 'MD5');
+        tree = new MerkleTree(numList, 'md5');
         expect(tree.root).toBe('744556995f960fddfe4303ab4175c601');
     });
 
