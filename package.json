@@ -1,0 +1,33 @@
+{
+  "name": "merkle-ts",
+  "version": "1.0.0",
+  "description": "Merkle tree class and utilities in TypeScript",
+  "scripts": {
+    "test": "jest",
+    "process": "npx ts-node index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasArmstrong/merkle-ts.git"
+  },
+  "keywords": [
+    "Merkle",
+    "Tree",
+    "TypeScript"
+  ],
+  "author": "Lucas Armstrong",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LucasArmstrong/merkle-ts/issues"
+  },
+  "homepage": "https://github.com/LucasArmstrong/merkle-ts#readme",
+  "devDependencies": {
+    "@types/jest": "^28.1.0",
+    "jest": "^28.1.0",
+    "ts-jest": "^28.0.4",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "crypto-js": "^4.1.1"
+  }
+}
