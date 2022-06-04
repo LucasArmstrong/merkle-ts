@@ -9,8 +9,13 @@ const CryptoJS = require('crypto-js');
 
 export type MerkleDataType = string | number | boolean | object;
 
+export interface IMerkleTree {
+    root: string;
+    createHash(data: MerkleDataType): string;
+}
+
 /** MarkeleTree - This class generates a Merkle Root for provided list of type MerkleDataType */
-export class MerkleTree {
+export class MerkleTree implements IMerkleTree {
 
     /**
     * root - Merkle Root - contains the root hash calculated for the data values provided
@@ -49,7 +54,22 @@ export class MerkleTree {
      * @returns {string}
      */
     public createHash(data: MerkleDataType): string {
-        return CryptoJS[this.type](data.toString()).toString();
+        const dataString: string = this.convertToString(data);
+        return CryptoJS[this.type](dataString).toString();
+    }
+
+    private convertToString(data: MerkleDataType) {
+        const dataType: string = typeof data;
+        switch(dataType) {
+            case 'string':
+            case 'boolean':
+            case 'number':
+                return data.toString();
+            case 'object':
+                return JSON.stringify(data);
+            default:
+                return dataType;
+        }
     }
 
     /**
@@ -58,7 +78,7 @@ export class MerkleTree {
      */
     private buildTree(array: MerkleDataType[]): void {
         if (array.length > 1) {
-            let hashed: string[] = [];
+            const hashed: string[] = [];
             for (const ele of array) {
                 hashed.push(this.createHash(ele));
             }
@@ -74,7 +94,7 @@ export class MerkleTree {
      * @returns {string}
      */
     private process(array: string[]): string {
-        const hashed = [];
+        const hashed: string[] = [];
         while (array.length > 0) {
             if (array.length > 1) {
                 const hashA: string | undefined = array.shift();

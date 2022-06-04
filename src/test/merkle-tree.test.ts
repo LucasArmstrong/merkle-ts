@@ -1,8 +1,18 @@
-import { MerkleTree } from '../merkle/MerkleTree';
+import { IMerkleTree, MerkleTree } from '../merkle/MerkleTree';
+const fs = require('fs');
+
+describe ('Test hashList.txt', () => {
+    test ('Loads into an array', () => {
+        const hashListArray: string[] = fs.readFileSync('hashList.txt').toString().split("\n");
+        const merkleTree: MerkleTree = new MerkleTree(hashListArray);
+        expect(merkleTree.root)
+            .toBe('8b65097db5948da501a243395088d2177eb94da1289570a22dab46a6d05bcd1b');
+    });
+});
 
 describe ('Constructs a merkle tree', () => {
     test ('Determine if hash works for a single value', () => {
-        let tree = new MerkleTree();
+        let tree: IMerkleTree = new MerkleTree();
         expect(tree.root).toBe('');
 
         tree = new MerkleTree([1]);
@@ -27,7 +37,7 @@ describe ('Constructs a merkle tree', () => {
     });
     
     test ('Determine if hash works for a multiple values', () => {
-        let tree = new MerkleTree([1,2]);
+        let tree: IMerkleTree = new MerkleTree([1,2]);
         expect(tree.root)
             .toBe('33b675636da5dcc86ec847b38c08fa49ff1cace9749931e0a5d4dfdbdedd808a');
 
@@ -54,9 +64,9 @@ describe ('Constructs a merkle tree', () => {
         tree = new MerkleTree(['Test string','More','Stuff',44,55,66,77,true,false,
             {test:'this'}]);
         expect(tree.root)
-            .toBe('134269b272dd8cde8d33e0b00b922e29a6961f46aa75aac83bf323bd1aa9e4df');
+            .toBe('6dbd40775d68d665019668a59072c5a283847797778cc518ef97b18bbad09919');
 
-        let numList = [];
+        let numList: number[] = [];
         for (let i = 0; i < 9999; i++) {
             numList.push(i);
         }
@@ -84,7 +94,7 @@ describe ('Constructs a merkle tree', () => {
 
         tree = new MerkleTree(['Test string','More','Stuff',44,55,66,77,true,false,
             {test:'this'}], 'MD5');
-        expect(tree.root).toBe('acdcd1d30e3e8ca2b7cb0e554deb6156');
+        expect(tree.root).toBe('a2cb7e58da10549ba35bbcecd7fe75f5');
 
         tree = new MerkleTree(numList, 'MD5');
         expect(tree.root).toBe('744556995f960fddfe4303ab4175c601');
