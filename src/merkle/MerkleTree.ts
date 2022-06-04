@@ -58,7 +58,12 @@ export class MerkleTree implements IMerkleTree {
         return CryptoJS[this.type](dataString).toString();
     }
 
-    private convertToString(data: MerkleDataType) {
+    /**
+     * 
+     * @param data {MerkleDataType}
+     * @returns {string}
+     */
+    private convertToString(data: MerkleDataType): string {
         const dataType: string = typeof data;
         switch(dataType) {
             case 'string':
