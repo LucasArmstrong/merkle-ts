@@ -1,11 +1,7 @@
 /** @module MerkleTree - generates a Merkle Tree from a list of data */
 /** Author: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong */
 
-/**
- * Imports
- * node:crypto - Used to calculate one way hashes
- */
-import * as crypto from 'node:crypto';
+import { MerkleHash } from "./MerkleHash";
 
 /**
  * @type MerkleDataType - Union type containing the primitives handled by MerkleTree
@@ -61,28 +57,7 @@ export class MerkleTree implements IMerkleTree {
      * @returns {string}
      */
     public createHash(data: MerkleDataType): string {
-        const dataString: string = this.convertToString(data);
-        return crypto.createHash(this.type).update(dataString).digest('hex');
-    }
-
-    /**
-     * @method convertToString - takes a MerkleDataType payload to generate a string for hashing
-     * 
-     * @param data {MerkleDataType}
-     * @returns {string}
-     */
-    private convertToString(data: MerkleDataType): string {
-        const dataType: string = typeof data;
-        switch(dataType) {
-            case 'string':
-            case 'boolean':
-            case 'number':
-                return data.toString();
-            case 'object':
-                return JSON.stringify(data);
-            default:
-                return dataType;
-        }
+        return MerkleHash.createHash(data, this.type);
     }
 
     /**

@@ -1,7 +1,8 @@
 /** @module MerkleFileProcessor - utilities to find the Merkle Root of a file or directory  */
 /** Author: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong */
 
-import { readFileSync, readdirSync, statSync } from 'fs';
+import { readdirSync, statSync } from 'fs';
+import { MerkleHash } from './MerkleHash';
 import { MerkleTree } from './MerkleTree';
 
 export class MerkleFileProcessor {
@@ -12,12 +13,16 @@ export class MerkleFileProcessor {
      * @param filePath 
      * @returns {string}
      */
-    static processFile(filePath: string): string {
-        const hashListArray = readFileSync(filePath).toString().split("\n");
-        const merkleTree: MerkleTree = new MerkleTree(hashListArray);
-        console.log(`\nMerkleTree processed ${hashListArray.length} lines of text from the ${filePath}`);
-        console.log(`Merkle root for hashList.txt: ${merkleTree.root}`);
-        return merkleTree.root;
+    static async processFile(filePath: string): Promise<string> {
+        try {
+            const fileHash: string = await MerkleHash.createHashFromFile(filePath);
+            const merkleTree: MerkleTree = new MerkleTree([fileHash]);
+            console.log(`Merkle root for ${filePath}: ${merkleTree.root}`);
+            return merkleTree.root;
+        } catch (error) {
+            console.log(`processFile error for file path '${filePath}': `, error);
+            return '';
+        }
     }
     
     /**
@@ -26,23 +31,30 @@ export class MerkleFileProcessor {
      * @param directoryPath 
      * @returns {string}
      */
-    static processDirectory(directoryPath: string): string {
+    static async processDirectory(directoryPath: string): Promise<string> {
         try {
             const fileHashRoots: string[] = [];
             const files: string[] = readdirSync(directoryPath);
-            files.forEach(file => {
-            const stat = statSync(`${directoryPath}/${file}`);
-            if (stat?.isDirectory()) {
-                fileHashRoots.push(MerkleFileProcessor.processDirectory(`${directoryPath}/${file}`));
-            } else {
-                fileHashRoots.push(MerkleFileProcessor.processFile(`${directoryPath}/${file}`));
+            if (!files.length) {
+                return '';
             }
-            });
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const stat = statSync(`${directoryPath}/${file}`);
+                if (stat?.isDirectory()) {
+                    fileHashRoots.push(await MerkleFileProcessor.processDirectory(`${directoryPath}/${file}`));
+                } else {
+                    fileHashRoots.push(await MerkleFileProcessor.processFile(`${directoryPath}/${file}`));
+                }
+            }
+            if (!fileHashRoots.length) {
+                return '';
+            }
             const merkleTree: MerkleTree = new MerkleTree(fileHashRoots);
             console.log(`\nMerkle root for ${directoryPath}/: ${merkleTree.root}`);
             return merkleTree.root;
         } catch (error) {
-            console.log('Unable to scan directory: ', error);
+            console.log(`Unable to scan directory: ${directoryPath}`, error);
             throw new Error(`processDirectory Error: ${error}`);
         }
     }
