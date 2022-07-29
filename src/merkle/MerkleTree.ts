@@ -1,4 +1,4 @@
-/** @module MerkleTree */
+/** @module MerkleTree - generates a Merkle Tree from a list of data */
 /** Author: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong */
 
 /**
@@ -7,8 +7,14 @@
  */
 import * as crypto from 'node:crypto';
 
+/**
+ * @type MerkleDataType - Union type containing the primitives handled by MerkleTree
+ */
 export type MerkleDataType = string | number | boolean | object;
 
+/**
+ * @interface IMerkleTree 
+ */
 export interface IMerkleTree {
     root: string;
     createHash(data: MerkleDataType): string;
@@ -40,15 +46,16 @@ export class MerkleTree implements IMerkleTree {
 
     /**
      * 
-     * @param values {MerkleDataType[]} - A list of values used to calculate the Merkle Root of type MerkleDataType
+     * @param dataArray {MerkleDataType[]} - A list of data used to calculate the Merkle Root of type MerkleDataType
      * @param type {string} - The type of one way hash algorithm used to generate hashes
      */
-    constructor(values: MerkleDataType[] = [], type: string = 'sha256') {
+    constructor(dataArray: MerkleDataType[] = [], type: string = 'sha256') {
         this.type = type;
-        this.buildTree(values);
+        this.buildTree(dataArray);
     }
 
     /**
+     * @method createHash - takes a MerkleDataType payload to generate a
      * 
      * @param data {MerkleDataType} - The value used to generate a hash
      * @returns {string}
@@ -59,6 +66,7 @@ export class MerkleTree implements IMerkleTree {
     }
 
     /**
+     * @method convertToString - takes a MerkleDataType payload to generate a string for hashing
      * 
      * @param data {MerkleDataType}
      * @returns {string}
@@ -78,48 +86,63 @@ export class MerkleTree implements IMerkleTree {
     }
 
     /**
+     * @method buildTree - breaks the data down into hashes then processes to find root of tree
      * 
-     * @param array {MerkleDataType[]} - The values used to generate the Merkle Tree
+     * @param dataArray {MerkleDataType[]} - The values used to generate the Merkle Tree
      */
-    private buildTree(array: MerkleDataType[]): void {
-        if (array.length > 1) {
+    private buildTree(dataArray: MerkleDataType[]): void {
+        if (!dataArray.length) {
+            throw new Error('dataArray has a minimum length of 1');
+        }
+
+        if (dataArray.length > 1) {
             const hashed: string[] = [];
-            for (const ele of array) {
+            for (const ele of dataArray) {
                 hashed.push(this.createHash(ele));
             }
             this.root = this.process(hashed);
-        } else if (array.length === 1) {
-            this.root = this.createHash(array[0]);
+        } else if (dataArray.length === 1) {
+            this.root = this.createHash(dataArray[0]);
         }
     }
 
     /**
+     * @method process - recursively breaks down a list of hashes into nodes until the root is found (a single hash)
      * 
-     * @param array {string[]} - Array of hashes used in calculating the Merkle Root
+     * @param hashArray {string[]} - Array of hashes to calculate the Merkle Root from
      * @returns {string}
      */
-    private process(array: string[]): string {
+    private process(hashArray: string[]): string {
+        if (!hashArray.length) {
+            throw new Error('hashArray has a minimum length of 1');
+        }
+
+        // digest elements from the hash array to create the nodes
         const hashed: string[] = [];
-        while (array.length > 0) {
-            if (array.length > 1) {
-                const hashA: string | undefined = array.shift();
-                const hashB: string | undefined = array.shift();
+        while (hashArray.length > 0) {
+            if (hashArray.length > 1) {
+                const hashA: string | undefined = hashArray.shift();
+                const hashB: string | undefined = hashArray.shift();
                 if (hashA && hashB) {
                     hashed.push(this.createHash(hashA + hashB));
                 }
-            } else if (array.length === 1) {
-                const lastHash: string | undefined = array.shift();
+            } else if (hashArray.length === 1) {
+                const lastHash: string | undefined = hashArray.shift();
                 if (lastHash) {
                     hashed.push(this.createHash(lastHash + lastHash));
                 }
             }
         }
+        
+        // track the hashes processed for this step
         this.hashRecords.push(hashed);
+
+        // more than one hash means we can process another step
         if (hashed.length > 1) {
             return this.process(hashed.slice());
-        } else if (hashed.length === 1) {
-            return hashed[0];
         }
-        return '';
+
+        // one hash means the root has been found
+        return hashed[0];
     }
 }

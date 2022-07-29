@@ -1,9 +1,9 @@
 import { IMerkleTree, MerkleTree } from '../merkle/MerkleTree';
-const fs = require('fs');
+import { readFileSync } from 'fs';
 
 describe ('Test hashList.txt', () => {
     test ('Loads into an array', () => {
-        const hashListArray: string[] = fs.readFileSync('src/assets/hashList.txt').toString().split("\n");
+        const hashListArray: string[] = readFileSync('src/assets/hashList.txt').toString().split("\n");
         const merkleTree: MerkleTree = new MerkleTree(hashListArray);
         expect(merkleTree.root)
             .toBe('8b65097db5948da501a243395088d2177eb94da1289570a22dab46a6d05bcd1b');
@@ -11,11 +11,22 @@ describe ('Test hashList.txt', () => {
 });
 
 describe ('Constructs a merkle tree', () => {
-    test ('Determine if hash works for a single value', () => {
-        let tree: IMerkleTree = new MerkleTree();
-        expect(tree.root).toBe('');
+    test ('Enforce a data array of at least 1 length', () => {
+        expect(() => {
+            let tree: IMerkleTree = new MerkleTree();
+        }).toThrowError('dataArray has a minimum length of 1');
 
-        tree = new MerkleTree([1]);
+        expect(() => {
+            let tree: IMerkleTree = new MerkleTree(new Array());
+        }).toThrowError('dataArray has a minimum length of 1');
+
+        expect(() => {
+            let tree: IMerkleTree = new MerkleTree([], 'md5');
+        }).toThrowError('dataArray has a minimum length of 1');
+    });
+
+    test ('Determine if hash works for a single value', () => {
+        let tree: IMerkleTree = new MerkleTree([1]);
         expect(tree.root)
             .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
         expect(tree.createHash('1'))
