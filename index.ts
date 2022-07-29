@@ -1,6 +1,6 @@
 import { MerkleFileProcessor } from './src/merkle/MerkleFileProcessor';
 
-const directoryPath = process.env.ASSET_DIRECTORY_PATH || './src/assets';
+const directoryPath = process.env.ASSET_DIRECTORY_PATH || './exampleAssets';
 
 try {
   (async () => {
