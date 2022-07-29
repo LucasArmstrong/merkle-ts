@@ -3,7 +3,7 @@ const fs = require('fs');
 
 describe ('Test hashList.txt', () => {
     test ('Loads into an array', () => {
-        const hashListArray: string[] = fs.readFileSync('hashList.txt').toString().split("\n");
+        const hashListArray: string[] = fs.readFileSync('src/assets/hashList.txt').toString().split("\n");
         const merkleTree: MerkleTree = new MerkleTree(hashListArray);
         expect(merkleTree.root)
             .toBe('8b65097db5948da501a243395088d2177eb94da1289570a22dab46a6d05bcd1b');

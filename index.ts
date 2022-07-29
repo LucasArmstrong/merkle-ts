@@ -1,7 +1,7 @@
 const fs = require('fs');
 import { MerkleTree } from './src/merkle/MerkleTree';
 
-const directoryPath = './src/examples/hashFiles';
+const directoryPath = './src/assets';
 
 try {
   console.log(`\n\n------------------- Processing single file -------------------`);
