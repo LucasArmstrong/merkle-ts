@@ -17,7 +17,7 @@ export class MerkleFileProcessor {
         try {
             const fileHash: string = await MerkleHash.createHashFromFile(filePath);
             const merkleTree: MerkleTree = new MerkleTree([fileHash]);
-            console.log(`Merkle root for ${filePath}: ${merkleTree.root}`);
+            // console.log(`Merkle root for ${filePath}: ${merkleTree.root}`);
             return merkleTree.root;
         } catch (error) {
             console.log(`processFile error for file path '${filePath}': `, error);
@@ -51,7 +51,7 @@ export class MerkleFileProcessor {
                 return '';
             }
             const merkleTree: MerkleTree = new MerkleTree(fileHashRoots);
-            console.log(`\nMerkle root for ${directoryPath}/: ${merkleTree.root}`);
+            // console.log(`\nMerkle root for ${directoryPath}/: ${merkleTree.root}`);
             return merkleTree.root;
         } catch (error) {
             console.log(`Unable to scan directory: ${directoryPath}`, error);
