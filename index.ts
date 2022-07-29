@@ -1,4 +1,4 @@
-const fs = require('fs');
+import { readFileSync, readdir } from 'fs';
 import { MerkleTree } from './src/merkle/MerkleTree';
 
 const directoryPath = './src/assets';
@@ -13,7 +13,7 @@ try {
 }
 
 function processFile(filePath: string): string {
-  const hashListArray = fs.readFileSync(filePath).toString().split("\n");
+  const hashListArray = readFileSync(filePath).toString().split("\n");
   const merkleTree: MerkleTree = new MerkleTree(hashListArray);
   console.log(`\nMerkleTree processed ${hashListArray.length} lines of text from the ${filePath}`);
   console.log(`Merkle root for hashList.txt: ${merkleTree.root}`);
@@ -21,7 +21,7 @@ function processFile(filePath: string): string {
 }
 
 function processDirectory(directoryPath: string) {
-  fs.readdir(directoryPath, function (err: Error, files: []) {
+  readdir(directoryPath, (err, files: string[]) => {
     if (err) {
         return console.log('Unable to scan directory: ' + err);
     }

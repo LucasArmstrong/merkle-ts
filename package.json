@@ -5,7 +5,9 @@
   "scripts": {
     "test": "jest",
     "process": "npx ts-node index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "repository": {
     "type": "git",
