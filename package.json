@@ -4,7 +4,8 @@
   "description": "Merkle tree class and utilities in TypeScript",
   "scripts": {
     "test": "jest",
-    "process": "npx ts-node index.ts"
+    "process": "npx ts-node index.ts",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,9 @@
   },
   "homepage": "https://github.com/LucasArmstrong/merkle-ts#readme",
   "devDependencies": {
-    "@types/jest": "^28.1.0",
-    "jest": "^28.1.0",
-    "ts-jest": "^28.0.4",
-    "typescript": "^4.7.3"
+    "@types/jest": "^28.1.6",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.7",
+    "typescript": "^4.7.4"
   }
 }
