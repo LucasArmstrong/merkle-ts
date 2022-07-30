@@ -1,5 +1,6 @@
 /** 
  * @module MerkleFileProcessor - utilities to find the Merkle Root of a file or directory
+ * 
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
  */
 
@@ -70,4 +71,5 @@ export class MerkleFileProcessor {
             throw new Error(`processDirectory Error: ${error}`);
         }
     }
+
 }

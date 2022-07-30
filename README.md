@@ -4,28 +4,29 @@
 [MerkleHash](https://github.com/LucasArmstrong/merkle-ts/blob/main/src/merkle/MerkleHash.ts), 
 and [MerkleChain](https://github.com/LucasArmstrong/merkle-ts/blob/main/src/merkle/MerkleChain.ts) 
 in TypeScript
-- Created by: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
+- Created by: Lucas Armstrong - Lucas@throneit.com - [github.com/LucasArmstrong](https://github.com/LucasArmstrong)
 - License: `MIT`
 
 ## Install in your project with NPM and use it
 - In your project run:
-- >`npm i https://github.com/LucasArmstrong/merkle-ts`
+- >npm i https://github.com/LucasArmstrong/merkle-ts
 - For TypeScript projects you can import the module MerkleTree
-- For JavaScript projects you can build with `npm run build`
+- For JavaScript projects you can build with:
+- >npm run build
 - - Then require in your code like:
-- - >`const {MerkleTree} = require('./node_modules/merkle-ts/dist/src/merkle/MerkleTree.js');`
+- - >const {MerkleTree} = require('./node_modules/merkle-ts/dist/src/merkle/MerkleTree.js');
 - - Example of using a merkle root in a jest test:
-- - >`let tree = new MerkleTree([1]); expect(tree.root).toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');`
+- - >let tree = new MerkleTree([1]); expect(tree.root).toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
 
 ## Calculate a Merkle Root from a directory of files recursively
 - First set or export environment variable `ASSET_DIRECTORY_PATH` to the directory you want to process.
 - Then run:
-- >`npm run process`
+- >npm run process
 - Digests and calculates a Merkle Root for the entire specified directory and contents
 
-### Test
+## Test
 - Execute tests with:
-- >`npm run test`
+- >npm run test
 - Runs a variety of tests proving that the MerkleTree class correctly calculates the merkle root for a set of data
 
 ## Merkle Tree Info.
@@ -33,7 +34,7 @@ In cryptography and computer science, a hash tree or Merkle tree is a tree in wh
 - Read more at https://en.wikipedia.org/wiki/Merkle_tree
 
 ## Available Hash Algorithms
->'RSA-MD4',
+`'RSA-MD4',
 'RSA-MD5',
 'RSA-MDC2',
 'RSA-RIPEMD160',
@@ -91,4 +92,4 @@ In cryptography and computer science, a hash tree or Merkle tree is a tree in wh
 'sm3WithRSAEncryption',
 'ssl3-md5',
 'ssl3-sha1',
-'whirlpool'
+'whirlpool'`

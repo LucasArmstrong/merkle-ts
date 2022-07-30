@@ -1,5 +1,6 @@
 /** 
  * @module MerkleHash - hash utlities for MerkleTree
+ * 
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong 
  */
 
@@ -95,6 +96,7 @@ export class MerkleHash {
 
     /**
      * @method createHashFromFile - Static method to be used as utility in order to create a hash from a file of any size
+     * 
      * @param filePath 
      * @returns {Promise<string>}
      */
@@ -133,4 +135,5 @@ export class MerkleHash {
                 return dataType;
         }
     }
+
 }

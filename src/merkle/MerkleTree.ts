@@ -1,5 +1,6 @@
 /** 
  * @module MerkleTree - generates a MerkleTree from a list of data
+ * 
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong 
  */
 
@@ -157,4 +158,5 @@ export class MerkleTree implements IMerkleTree {
         // one hash means the root has been found
         return hashed[0];
     }
+
 }

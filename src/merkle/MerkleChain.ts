@@ -1,7 +1,8 @@
 /** 
- * @module MerkleChain - list based data structure seeded with a gensis timestamp and 
+ * @module MerkleChain - list based data structure seeded with a genesis timestamp and 
  *          maintains a merkle root, optimized to quickly traverse and search nodes 
  * @module MerkleChainNode - type for the nodes in MerkleChain
+ * 
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
  */
 
@@ -18,8 +19,15 @@ export type MerkleChainNodeNullable = MerkleChainNode | null;
 
 /**
  * @class MerkleChainNode
+ * 
+ * @param genesisAt {number}
+ * @param dataArray {MerkleDataType[]}
  */
 export class MerkleChainNode {
+
+    /**
+     * @var next
+     */
     private _next: MerkleChainNodeNullable = null;
     set next(nextNode: MerkleChainNodeNullable) {
         this._next = nextNode;
@@ -33,11 +41,17 @@ export class MerkleChainNode {
         return this._next;
     }
 
+    /**
+     * @var nextRoot
+     */
     private _nextRoot: string = '';
     get nextRoot(): string {
         return this._nextRoot;
     }
 
+    /**
+     * @var prev
+     */
     private _prev: MerkleChainNodeNullable = null;
     set prev(prevNode: MerkleChainNodeNullable) {
         this._prev = prevNode;
@@ -51,12 +65,22 @@ export class MerkleChainNode {
         return this._prev;
     }
 
+    /**
+     * @var prevRoot
+     */
     private _prevRoot: string = '';
     get prevRoot(): string {
         return this._prevRoot;
     }
     
+    /**
+     * @var merkleRoot
+     */
     merkleRoot: string = '';
+
+    /**
+     * @var dataArray
+     */
     dataArray: MerkleDataType[];
 
     constructor (genesisAt: number, dataArray: MerkleDataType[] = []) {
@@ -71,13 +95,28 @@ export class MerkleChainNode {
 
 /**
  * @class MerkleChain
+ * @param dataArray {MerkleDataType[]}
  */
 export class MerkleChain {
+    
+    /**
+     * @var head - pointer for the node at the start of the list
+     */
     head: MerkleChainNodeNullable = null;
+
+    /**
+     * @var tail - pointer for the node at the end of the list
+     */
     tail: MerkleChainNodeNullable = null;
 
+    /**
+     * @var genesisAt - timestamp used to seed the list
+     */
     genesisAt: number = 0;
 
+    /**
+     * @var merkleRoot
+     */
     private _merkleRoot: string = '';
     get merkleRoot(): string {
         return this._merkleRoot;
@@ -88,11 +127,22 @@ export class MerkleChain {
         this.genesisAt = new Date().getTime();
     }
 
-    addNode(dataArray: MerkleDataType[] = []) {
+    /**
+     * @method addNode - creates a new node from a MerkleDataType array
+     * 
+     * @param dataArray {MerkleDataType[]} - array of MerkleDataType data that gets inserted into the list as a new node
+     * @returns {void}
+     */
+    addNode(dataArray: MerkleDataType[] = []): void {
         this.newNode(new MerkleChainNode(this.genesisAt, dataArray));
         this._merkleRoot = new MerkleTree(this.toRootArray()).root;
     }
 
+    /**
+     * @method toRootArray - returns an array of the merkle roots from all nodes in the list
+     * 
+     * @returns {string[]}
+     */
     toRootArray(): string[] {
         const values: string[] = [];
         let current: MerkleChainNodeNullable = this.head;
@@ -103,6 +153,12 @@ export class MerkleChain {
         return values;
     }
     
+    /**
+     * @method newNode - manages inserting a new node to the list
+     * 
+     * @param node {MerkleChainNode} - node to be added to the list
+     * @returns {MerkleChainNode}
+     */
     private newNode(node: MerkleChainNode) : MerkleChainNode {
         if (!this.head) {
             this.head = node;
@@ -119,4 +175,5 @@ export class MerkleChain {
 
         return node;
     }
+
 }
