@@ -1,7 +1,5 @@
 /** 
- * @module MerkleChain - list based data structure seeded with a genesis timestamp and 
- *          maintains a merkle root, optimized to quickly traverse and search nodes 
- * @module MerkleChainNode - type for the nodes in MerkleChain
+ * @module MerkleChain - merkle tree list based data structure seeded with a genesis timestamp
  * 
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
  */
@@ -15,15 +13,15 @@ import { MerkleDataType, MerkleTree } from "./MerkleTree";
 /**
  * @type MerkleChainNodeNullable
  */
-export type MerkleChainNodeNullable = MerkleChainNode | null;
+type MerkleChainNodeNullable = MerkleChainNode | null;
 
 /**
  * @class MerkleChainNode
  * 
- * @param genesisAt {number}
- * @param dataArray {MerkleDataType[]}
+ * @param genesisAt number
+ * @param dataArray MerkleDataType[]
  */
-export class MerkleChainNode {
+class MerkleChainNode {
 
     /**
      * @var next
@@ -95,7 +93,8 @@ export class MerkleChainNode {
 
 /**
  * @class MerkleChain
- * @param dataArray {MerkleDataType[]}
+ * 
+ * @param dataArray MerkleDataType[]
  */
 export class MerkleChain {
     
@@ -130,7 +129,7 @@ export class MerkleChain {
     /**
      * @method addNode - creates a new node from a MerkleDataType array
      * 
-     * @param dataArray {MerkleDataType[]} - array of MerkleDataType data that gets inserted into the list as a new node
+     * @param dataArray MerkleDataType[] - array of MerkleDataType data that gets inserted into the list as a new node
      * @returns {void}
      */
     addNode(dataArray: MerkleDataType[] = []): void {
@@ -156,7 +155,7 @@ export class MerkleChain {
     /**
      * @method newNode - manages inserting a new node to the list
      * 
-     * @param node {MerkleChainNode} - node to be added to the list
+     * @param node MerkleChainNode - node to be added to the list
      * @returns {MerkleChainNode}
      */
     private newNode(node: MerkleChainNode) : MerkleChainNode {

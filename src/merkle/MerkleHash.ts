@@ -86,7 +86,7 @@ export class MerkleHash {
     /**
      * @method createHash - takes a MerkleDataType payload to generate a
      * 
-     * @param data {MerkleDataType} - The value used to generate a hash
+     * @param data MerkleDataType - The value used to generate a hash
      * @returns {string}
      */
      static createHash(data: MerkleDataType, hashAlgorithm: HashAlgorithm = HashAlgorithm.sha256): string {
@@ -119,7 +119,7 @@ export class MerkleHash {
     /**
      * @method convertToString - takes a MerkleDataType payload to generate a string for hashing
      * 
-     * @param data {MerkleDataType}
+     * @param data MerkleDataType
      * @returns {string}
      */
      private static convertToString(data: MerkleDataType): string {

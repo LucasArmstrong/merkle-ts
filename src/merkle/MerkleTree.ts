@@ -55,8 +55,8 @@ export class MerkleTree implements IMerkleTree {
 
     /**
      * 
-     * @param dataArray {MerkleDataType[]} - A list of data used to calculate the Merkle Root of type MerkleDataType
-     * @param type {string} - The type of one way hash algorithm used to generate hashes
+     * @param dataArray MerkleDataType[] - A list of data used to calculate the Merkle Root of type MerkleDataType
+     * @param type string - The type of one way hash algorithm used to generate hashes
      */
     constructor(dataArray: MerkleDataType[], type: HashAlgorithm = HashAlgorithm.sha256) {
         this.type = type;
@@ -89,7 +89,7 @@ export class MerkleTree implements IMerkleTree {
     /**
      * @method createHash - takes a MerkleDataType payload to generate a
      * 
-     * @param data {MerkleDataType} - The value used to generate a hash
+     * @param data MerkleDataType - The value used to generate a hash
      * @returns {string}
      */
     public createHash(data: MerkleDataType): string {
@@ -99,7 +99,7 @@ export class MerkleTree implements IMerkleTree {
     /**
      * @method buildTree - breaks the data down into hashes then processes to find root of tree
      * 
-     * @param dataArray {MerkleDataType[]} - The values used to generate the Merkle Tree
+     * @param dataArray MerkleDataType[] - The values used to generate the Merkle Tree
      */
     private buildTree(): void {
         if (!this.dataArray.length) {
@@ -122,7 +122,7 @@ export class MerkleTree implements IMerkleTree {
     /**
      * @method process - recursively breaks down a list of hashes into nodes until the root is found (a single hash)
      * 
-     * @param hashArray {string[]} - Array of hashes to calculate the Merkle Root from
+     * @param hashArray string[] - Array of hashes to calculate the Merkle Root from
      * @returns {string}
      */
     private process(hashArray: string[]): string {
