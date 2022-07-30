@@ -51,7 +51,15 @@ export class MerkleTree implements IMerkleTree {
     */
     private hashRecords: string[][] = [];
 
+    /**
+     * @var dataArray - stores a copy of the MerkleDataType[] that the tree is populated by
+     */
     private dataArray: MerkleDataType[] = [];
+
+    /**
+     * @var dataHashIndex - A hash key index that points to a data's correpsonding dataArray index
+     */
+    private dataHashIndex: {[hashKey: string]: number} = {};
 
     /**
      * 
@@ -97,6 +105,19 @@ export class MerkleTree implements IMerkleTree {
     }
 
     /**
+     * @method getDataFromHash - returns the MerkleDataType associated with the given hash key
+     * 
+     * @param hashKey
+     * @returns MerkleDataType | null
+     */
+    public getDataFromHash(hashKey: string): MerkleDataType | null {
+        if (typeof this.dataHashIndex[hashKey] !== undefined) {
+            return this.dataArray[this.dataHashIndex[hashKey]] ?? null;
+        }
+        return null;
+    }
+
+    /**
      * @method buildTree - breaks the data down into hashes then processes to find root of tree
      * 
      * @param dataArray MerkleDataType[] - The values used to generate the Merkle Tree
@@ -107,11 +128,14 @@ export class MerkleTree implements IMerkleTree {
         }
 
         this.hashRecords = [];
+        this.dataHashIndex = {};
 
         if (this.dataArray.length > 1) {
             const hashed: string[] = [];
-            for (const ele of this.dataArray) {
-                hashed.push(this.createHash(ele));
+            for (const {index, value} of this.dataArray.map((value, index) => ({ index, value }))) {
+                const eleHash = this.createHash(value);
+                hashed.push(eleHash);
+                this.dataHashIndex[eleHash] = index;
             }
             this.root = this.process(hashed);
         } else if (this.dataArray.length === 1) {

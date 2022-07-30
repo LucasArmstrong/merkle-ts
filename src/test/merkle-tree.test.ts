@@ -1,6 +1,6 @@
 import { IMerkleTree, MerkleTree } from '../merkle/MerkleTree';
 import { readFileSync } from 'fs';
-import { HashAlgorithm } from '../merkle/MerkleHash';
+import { HashAlgorithm, MerkleHash } from '../merkle/MerkleHash';
 
 describe ('Test hashList.txt', () => {
     test ('Loads into an array', () => {
@@ -48,7 +48,7 @@ describe ('Constructs a merkle tree', () => {
         expect(tree.createHash('Test string')).toBe('0fd3dbec9730101bff92acc820befc34');
     });
 
-    test ('Determine if adding additional nodes works', () => {
+    test ('#addNode , #addNodes - Determine if adding additional nodes works', () => {
         let tree: IMerkleTree = new MerkleTree([1]);
         expect(tree.root)
             .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
@@ -226,4 +226,14 @@ describe ('Constructs a merkle tree', () => {
         let hashA_B_C_D = treeA_B_C_D.createHash(treeA_B.root + treeC_D.root);
         expect(hashA_B_C_D).toBe(treeA_B_C_D.root);
     });
-})
+
+    test('#getDataFromHash - Retrieve data from associated hash key', () => {
+        const dataArray = ['some', 1, 'data', {array:['ok']}];
+        const dataMerkleTree = new MerkleTree(dataArray);
+        for (let data of dataArray) {
+            const dataHash = MerkleHash.createHash(data);
+            expect(dataMerkleTree.getDataFromHash(dataHash))
+                .toEqual(data);
+        }
+    });
+});
