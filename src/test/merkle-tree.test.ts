@@ -14,7 +14,7 @@ describe ('Test hashList.txt', () => {
 describe ('Constructs a merkle tree', () => {
     test ('Enforce a data array of at least 1 length', () => {
         expect(() => {
-            let tree: IMerkleTree = new MerkleTree();
+            let tree: IMerkleTree = new MerkleTree([]);
         }).toThrowError('dataArray has a minimum length of 1');
 
         expect(() => {
@@ -46,6 +46,37 @@ describe ('Constructs a merkle tree', () => {
         tree = new MerkleTree(['Test string'], HashAlgorithm.md5);
         expect(tree.root).toBe('0fd3dbec9730101bff92acc820befc34');
         expect(tree.createHash('Test string')).toBe('0fd3dbec9730101bff92acc820befc34');
+    });
+
+    test ('Determine if adding additional nodes works', () => {
+        let tree: IMerkleTree = new MerkleTree([1]);
+        expect(tree.root)
+            .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
+        tree.addNode(2);
+        expect(tree.root)
+            .toBe('33b675636da5dcc86ec847b38c08fa49ff1cace9749931e0a5d4dfdbdedd808a');
+
+        tree = new MerkleTree([1]);
+        expect(tree.root)
+            .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
+        tree.addNodes([2,3]);
+        expect(tree.root)
+            .toBe('f3f1917304e3af565b827d1baa9fac18d5b287ae97adda22dc51a0aef900b787');
+
+        tree = new MerkleTree(['Test string']);
+        expect(tree.root)
+            .toBe('a3e49d843df13c2e2a7786f6ecd7e0d184f45d718d1ac1a8a63e570466e489dd');
+        tree.addNode('More');
+        expect(tree.root)
+            .toBe('a84e8547891590b0b7a2ec14f27f584859f96054255b1ecc134143ab8dec7c2f');
+
+        tree = new MerkleTree(['Test string']);
+        expect(tree.root)
+            .toBe('a3e49d843df13c2e2a7786f6ecd7e0d184f45d718d1ac1a8a63e570466e489dd');
+        tree.addNodes(['More','Stuff']);
+        expect(tree.root)
+            .toBe('dc4aab0853b6ad15862daf14e3f95708dc06e22d39dc341be2a5b65c856e0aa4');
+
     });
     
     test ('Determine if hash works for a multiple values', () => {

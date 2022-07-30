@@ -14,6 +14,8 @@ export type MerkleDataType = string | number | boolean | object;
 export interface IMerkleTree {
     root: string;
     createHash(data: MerkleDataType): string;
+    addNode(data: MerkleDataType): void;
+    addNodes(dataArray: MerkleDataType[]): void;
 }
 
 /** MarkeleTree - This class generates a Merkle Root for provided list of type MerkleDataType */
@@ -40,14 +42,39 @@ export class MerkleTree implements IMerkleTree {
     */
     private hashRecords: string[][] = [];
 
+    private dataArray: MerkleDataType[] = [];
+
     /**
      * 
      * @param dataArray {MerkleDataType[]} - A list of data used to calculate the Merkle Root of type MerkleDataType
      * @param type {string} - The type of one way hash algorithm used to generate hashes
      */
-    constructor(dataArray: MerkleDataType[] = [], type: HashAlgorithm = HashAlgorithm.sha256) {
+    constructor(dataArray: MerkleDataType[], type: HashAlgorithm = HashAlgorithm.sha256) {
         this.type = type;
-        this.buildTree(dataArray);
+        this.dataArray = dataArray;
+        this.buildTree();
+    }
+
+    /**
+     * @method addNode - adds a new data node and rebuilds the tree
+     * 
+     * @param data 
+     */
+    public addNode(data: MerkleDataType): void {
+        this.dataArray.push(data);
+        this.buildTree();
+    }
+
+    /**
+     * @method addNodes - adds multiple new data nodes and rebuilds the tree
+     * 
+     * @param dataArray 
+     */
+    public addNodes(dataArray: MerkleDataType[]): void {
+        dataArray.forEach(data => {
+            this.dataArray.push(data);
+        });
+        this.buildTree();
     }
 
     /**
@@ -65,19 +92,21 @@ export class MerkleTree implements IMerkleTree {
      * 
      * @param dataArray {MerkleDataType[]} - The values used to generate the Merkle Tree
      */
-    private buildTree(dataArray: MerkleDataType[]): void {
-        if (!dataArray.length) {
+    private buildTree(): void {
+        if (!this.dataArray.length) {
             throw new Error('dataArray has a minimum length of 1');
         }
 
-        if (dataArray.length > 1) {
+        this.hashRecords = [];
+
+        if (this.dataArray.length > 1) {
             const hashed: string[] = [];
-            for (const ele of dataArray) {
+            for (const ele of this.dataArray) {
                 hashed.push(this.createHash(ele));
             }
             this.root = this.process(hashed);
-        } else if (dataArray.length === 1) {
-            this.root = this.createHash(dataArray[0]);
+        } else if (this.dataArray.length === 1) {
+            this.root = this.createHash(this.dataArray[0]);
         }
     }
 
