@@ -7,7 +7,8 @@
     "process": "npx ts-node index.ts",
     "build": "tsc",
     "lint": "npx eslint .",
-    "lint:fix": "npx eslint . --fix"
+    "lint:fix": "npx eslint . --fix",
+    "typedoc": "npx typedoc src/merkle/*.ts"
   },
   "repository": {
     "type": "git",

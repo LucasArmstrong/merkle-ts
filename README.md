@@ -23,6 +23,11 @@ in TypeScript
 - Then run:
 - >npm run process
 - Digests and calculates a Merkle Root for the entire specified directory and contents
+- If you don't set the env var above, then the default directory is `exampleAssets`, the output should look like this:
+- >------------------- Directory Processing Starting -------------------  
+directoryPath = ./exampleAssets  
+directory merkle root for ./exampleAssets: `d52c8079ae7fdaf0c455451ec1b8b729fa8de64602012062679126c90586bd7d`  
+Directory processing complete in 0.024 seconds.
 
 ## Test
 - Execute tests with:
