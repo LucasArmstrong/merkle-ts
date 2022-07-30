@@ -1,7 +1,7 @@
 /** @module MerkleTree - generates a Merkle Tree from a list of data */
 /** Author: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong */
 
-import { MerkleHash } from "./MerkleHash";
+import { HashAlgorithm, MerkleHash } from "./MerkleHash";
 
 /**
  * @type MerkleDataType - Union type containing the primitives handled by MerkleTree
@@ -33,7 +33,7 @@ export class MerkleTree implements IMerkleTree {
     /**
     * type - Hash Type - the type of one way hash algorithm the MerkleTree uses to build hashes
     */
-    private type: string = '';
+    private type: HashAlgorithm;
     
     /**
     * hashRecords - Hash Log - a list of hashes generated while calculating the merkle root
@@ -45,7 +45,7 @@ export class MerkleTree implements IMerkleTree {
      * @param dataArray {MerkleDataType[]} - A list of data used to calculate the Merkle Root of type MerkleDataType
      * @param type {string} - The type of one way hash algorithm used to generate hashes
      */
-    constructor(dataArray: MerkleDataType[] = [], type: string = 'sha256') {
+    constructor(dataArray: MerkleDataType[] = [], type: HashAlgorithm = HashAlgorithm.sha256) {
         this.type = type;
         this.buildTree(dataArray);
     }
