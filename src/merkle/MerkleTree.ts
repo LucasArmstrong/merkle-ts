@@ -1,5 +1,5 @@
 /** 
- * @module MerkleTree - generates a Merkle Tree from a list of data
+ * @module MerkleTree - generates a MerkleTree from a list of data
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong 
  */
 
@@ -24,11 +24,13 @@ export interface IMerkleTree {
     addNodes(dataArray: MerkleDataType[]): void;
 }
 
-/** MarkeleTree - This class generates a Merkle Root for provided list of type MerkleDataType */
+/**
+ * @class MerkleTree
+ */
 export class MerkleTree implements IMerkleTree {
 
     /**
-    * root - Merkle Root - contains the root hash calculated for the data values provided
+    * @var root - Merkle Root - contains the root hash calculated for the data values provided
     */
     private _root: string = '';
     public get root(): string {
@@ -39,12 +41,12 @@ export class MerkleTree implements IMerkleTree {
     }
 
     /**
-    * type - Hash Type - the type of one way hash algorithm the MerkleTree uses to build hashes
+    * @var type - Hash Type - the type of one way hash algorithm the MerkleTree uses to build hashes
     */
     private type: HashAlgorithm;
     
     /**
-    * hashRecords - Hash Log - a list of hashes generated while calculating the merkle root
+    * @var hashRecords - Hash Log - a list of hashes generated while calculating the merkle root
     */
     private hashRecords: string[][] = [];
 
@@ -131,13 +133,13 @@ export class MerkleTree implements IMerkleTree {
         const hashed: string[] = [];
         while (hashArray.length > 0) {
             if (hashArray.length > 1) {
-                const hashA: string | undefined = hashArray.shift();
-                const hashB: string | undefined = hashArray.shift();
+                const hashA: string = hashArray.shift() ?? '';
+                const hashB: string = hashArray.shift() ?? '';
                 if (hashA && hashB) {
                     hashed.push(this.createHash(hashA + hashB));
                 }
             } else if (hashArray.length === 1) {
-                const lastHash: string | undefined = hashArray.shift();
+                const lastHash: string = hashArray.shift() ?? '';
                 if (lastHash) {
                     hashed.push(this.createHash(lastHash + lastHash));
                 }

@@ -3,10 +3,20 @@
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
  */
 
+/**
+ * @import fs.readdirSync
+ * @import fs.statSync
+ * @import HashAlgorithm - Enum of hash algorithms
+ * @import MerkleHash - Hash utlities for MerkleTree
+ * @import MerkleTree - generates a MerkleTree from a list of data
+ */
 import { readdirSync, statSync } from 'fs';
 import { HashAlgorithm, MerkleHash } from './MerkleHash';
 import { MerkleTree } from './MerkleTree';
 
+/**
+ * @class MerkleFileProcessor
+ */
 export class MerkleFileProcessor {
 
     /**

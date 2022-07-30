@@ -1,14 +1,24 @@
 /** 
- * @module MerkleChain - list type data structure seeded with a gensis timestamp and 
- *  maintains a merkle root, optimized to quickly traverse and search nodes 
+ * @module MerkleChain - list based data structure seeded with a gensis timestamp and 
+ *          maintains a merkle root, optimized to quickly traverse and search nodes 
  * @module MerkleChainNode - type for the nodes in MerkleChain
  * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
  */
 
+/**
+ * @import MerkleDataType - all the data types used in MerkleTree
+ * @import MerkleTree - generates a MerkleTree from a list of data
+ */
 import { MerkleDataType, MerkleTree } from "./MerkleTree";
 
+/**
+ * @type MerkleChainNodeNullable
+ */
 export type MerkleChainNodeNullable = MerkleChainNode | null;
 
+/**
+ * @class MerkleChainNode
+ */
 export class MerkleChainNode {
     private _next: MerkleChainNodeNullable = null;
     set next(nextNode: MerkleChainNodeNullable) {
@@ -59,9 +69,13 @@ export class MerkleChainNode {
     }
 }
 
+/**
+ * @class MerkleChain
+ */
 export class MerkleChain {
     head: MerkleChainNodeNullable = null;
     tail: MerkleChainNodeNullable = null;
+
     genesisAt: number = 0;
 
     private _merkleRoot: string = '';

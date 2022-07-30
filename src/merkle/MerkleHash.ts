@@ -12,6 +12,9 @@ import * as crypto from 'node:crypto';
 import { createReadStream } from 'fs';
 import { MerkleDataType } from "./MerkleTree";
 
+/**
+ * @enum HashAlgorithm
+ */
 export enum HashAlgorithm {
     'RSA-MD4' = 'RSA-MD4',
     'RSA-MD5' = 'RSA-MD5',
@@ -74,6 +77,9 @@ export enum HashAlgorithm {
     'whirlpool' = 'whirlpool'
 }
 
+/**
+ * @class MerkleHash
+ */
 export class MerkleHash {
     
     /**
