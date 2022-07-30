@@ -4,6 +4,12 @@ Created by: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
 Date: 6/4/2022
 License: MIT
 
+### Install in your project with NPM and use it
+- In your project run `npm i https://github.com/LucasArmstrong/merkle-ts`
+- For TypeScript projects you can import the module MerkleTree
+- For JavaScript projects you can build with `npm run build`
+- - Then require in your code like `const {MerkleTree} = require('./node_modules/merkle-ts/dist/src/merkle/MerkleTree.js');`
+
 ### Calculate a Merkle Root from a directory of files recursively
 - First set or export environment variable `ASSET_DIRECTORY_PATH` to the directory you want to process.
 - Then run `npm run process`
