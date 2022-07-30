@@ -8,7 +8,10 @@ License: MIT
 - In your project run `npm i https://github.com/LucasArmstrong/merkle-ts`
 - For TypeScript projects you can import the module MerkleTree
 - For JavaScript projects you can build with `npm run build`
-- - Then require in your code like `const {MerkleTree} = require('./node_modules/merkle-ts/dist/src/merkle/MerkleTree.js');`
+- - Then require in your code like:
+- - `const {MerkleTree} = require('./node_modules/merkle-ts/dist/src/merkle/MerkleTree.js');`
+- - Example of using a merkle root in a jest test:
+- - `let tree = new MerkleTree([1]); expect(tree.root).toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');`
 
 ### Calculate a Merkle Root from a directory of files recursively
 - First set or export environment variable `ASSET_DIRECTORY_PATH` to the directory you want to process.
