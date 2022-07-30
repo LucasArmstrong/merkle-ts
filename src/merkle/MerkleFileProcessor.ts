@@ -1,5 +1,7 @@
-/** @module MerkleFileProcessor - utilities to find the Merkle Root of a file or directory  */
-/** Author: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong */
+/** 
+ * @module MerkleFileProcessor - utilities to find the Merkle Root of a file or directory
+ * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
+ */
 
 import { readdirSync, statSync } from 'fs';
 import { HashAlgorithm, MerkleHash } from './MerkleHash';

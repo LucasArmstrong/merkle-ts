@@ -1,11 +1,12 @@
-/** @module MerkleHash - hash utlities for MerkleTree */
-/** Author: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong */
+/** 
+ * @module MerkleHash - hash utlities for MerkleTree
+ * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong 
+ */
 
 /**
- * Imports
- * node:crypto - Used to calculate one way hashes
- * fs.createReadStream - For creating a hash from a file
- * MerkleDataType - all the data types used in MerkleTree
+ * @import node:crypto - Used to calculate one way hashes
+ * @import fs.createReadStream - For creating a hash from a file
+ * @import MerkleDataType - all the data types used in MerkleTree
  */
 import * as crypto from 'node:crypto';
 import { createReadStream } from 'fs';

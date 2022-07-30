@@ -1,8 +1,7 @@
 # merkle-ts
-Merkle tree &amp; utilities in TypeScript
-Created by: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
-Date: 6/4/2022
-License: MIT
+- MerkleTree, MerkleFileProcessor, MerkleHash, and MerkleChain in TypeScript
+- Created by: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong
+- License: MIT
 
 ### Install in your project with NPM and use it
 - In your project run `npm i https://github.com/LucasArmstrong/merkle-ts`

@@ -1,6 +1,12 @@
-/** @module MerkleTree - generates a Merkle Tree from a list of data */
-/** Author: Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong */
+/** 
+ * @module MerkleTree - generates a Merkle Tree from a list of data
+ * @author Lucas Armstrong - Lucas@throneit.com - github.com/LucasArmstrong 
+ */
 
+/**
+ * @import HashAlgorithm - Enum of hash algorithms
+ * @import MerkleHash - Hash utlities for MerkleTree
+ */
 import { HashAlgorithm, MerkleHash } from "./MerkleHash";
 
 /**
