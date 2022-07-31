@@ -190,7 +190,7 @@ export class MerkleTree implements IMerkleTree {
      */
     public static maxDepthFromDataArray(dataArray: MerkleDataType[]): number {
         let currentLength = dataArray.length;
-        let depth = 0;
+        let depth = 1;
         while (currentLength > 1) {
             if (currentLength % 2 !== 0) {
                 currentLength++;
