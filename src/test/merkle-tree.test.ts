@@ -251,6 +251,19 @@ describe ('Constructs a merkle tree', () => {
         expect(MerkleTree.maxDepthFromDataArray(dataArray)).toBe(5);
 
         const dataArrayOneMillion = new Array(1000000);
-        expect(MerkleTree.maxDepthFromDataArray(dataArrayOneMillion)).toBe(21);
+        const maxDepthOneMillion = MerkleTree.maxDepthFromDataArray(dataArrayOneMillion);
+        expect(maxDepthOneMillion).toBe(21);
+
+        const dataArray500filled = new Array(500).fill(Math.random());
+        const maxDepth500 = MerkleTree.maxDepthFromDataArray(dataArray500filled);
+        expect(maxDepth500).toBe(10);
+        const tree = new MerkleTree(dataArray500filled);
+        expect(tree.hashRecords.length).toBe(maxDepth500);
+
+        const dataArrayOne = [1];
+        const maxDepth1 = MerkleTree.maxDepthFromDataArray(dataArrayOne);
+        expect(maxDepth1).toBe(1);
+        const treeOneData = new MerkleTree(dataArrayOne);
+        expect(treeOneData.hashRecords.length).toBe(maxDepth1);
     });
 });

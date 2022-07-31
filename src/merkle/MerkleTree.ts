@@ -47,9 +47,12 @@ export class MerkleTree implements IMerkleTree {
     private type: HashAlgorithm;
     
     /**
-    * @var hashRecords - Hash Log - a list of hashes generated while calculating the merkle root
+    * @var _hashRecords - Hash Log - a list of hashes generated while calculating the merkle root
     */
-    private hashRecords: string[][] = [];
+    private _hashRecords: string[][] = [];
+    public get hashRecords(): string[][] {
+        return this._hashRecords;
+    }
 
     /**
      * @var dataArray - stores a copy of the MerkleDataType[] that the tree is populated by
@@ -127,7 +130,7 @@ export class MerkleTree implements IMerkleTree {
             throw new Error('dataArray has a minimum length of 1');
         }
 
-        this.hashRecords = [];
+        this._hashRecords = [];
         this.dataHashIndex = {};
 
         if (this.dataArray.length > 1) {
@@ -137,9 +140,11 @@ export class MerkleTree implements IMerkleTree {
                 hashed.push(eleHash);
                 this.dataHashIndex[eleHash] = index;
             }
+            this._hashRecords.push(hashed);
             this.root = this.process(hashed);
         } else if (this.dataArray.length === 1) {
             this.root = this.createHash(this.dataArray[0]);
+            this._hashRecords.push([this.root]);
         }
     }
 
@@ -172,7 +177,7 @@ export class MerkleTree implements IMerkleTree {
         }
         
         // track the hashes processed for this step
-        this.hashRecords.push(hashed);
+        this._hashRecords.push(hashed);
 
         // more than one hash means we can process another step
         if (hashed.length > 1) {
