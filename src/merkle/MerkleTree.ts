@@ -183,4 +183,22 @@ export class MerkleTree implements IMerkleTree {
         return hashed[0];
     }
 
+    /**
+     * @method maxDepthFromDataArray - Calculate the maximum depth of the MerkleTree from the length of the dataArray
+     * 
+     * @param dataArray
+     */
+    public static maxDepthFromDataArray(dataArray: MerkleDataType[]): number {
+        let currentLength = dataArray.length;
+        let depth = 0;
+        while (currentLength > 1) {
+            if (currentLength % 2 !== 0) {
+                currentLength++;
+            }
+            currentLength = currentLength / 2;
+            depth++;
+        }
+        return depth;
+    }
+
 }

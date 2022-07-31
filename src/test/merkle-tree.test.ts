@@ -236,4 +236,21 @@ describe ('Constructs a merkle tree', () => {
                 .toEqual(data);
         }
     });
+
+    test('#maxDepthFromDataArray - validated max MerkleTree depth', () => {
+        const dataArray100 = new Array(100);
+        expect(MerkleTree.maxDepthFromDataArray(dataArray100)).toBe(7);
+
+        const dataArray200 = new Array(200);
+        expect(MerkleTree.maxDepthFromDataArray(dataArray200)).toBe(8);
+
+        const dataArray1000 = new Array(1000);
+        expect(MerkleTree.maxDepthFromDataArray(dataArray1000)).toBe(10);
+
+        const dataArray = ['Test string','More','Stuff',44,55,66,77,true,false,{test:'this'}];
+        expect(MerkleTree.maxDepthFromDataArray(dataArray)).toBe(4);
+
+        const dataArrayOneMillion = new Array(1000000);
+        expect(MerkleTree.maxDepthFromDataArray(dataArrayOneMillion)).toBe(20);
+    });
 });
