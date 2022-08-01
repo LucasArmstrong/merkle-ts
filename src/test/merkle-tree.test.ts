@@ -283,4 +283,18 @@ describe ('Constructs a merkle tree', () => {
         expect(treeData1mill.hashRecords.length).toBe(maxDepth1mill);
         */
     });
+
+    test('validate idempotency', () => {
+        const dataArray = ['Test string','More','Stuff',44,55,66,77,true,false,{test:'this'}];
+        const dataRoot = new MerkleTree(dataArray).root;
+        for (let i = 0; i < 100; i++) {
+            expect(new MerkleTree([...dataArray]).root).toBe(dataRoot);
+        }
+
+        const dataArray5k = new Array(5000).fill(Math.random());
+        const dataArray5kRoot = new MerkleTree(dataArray5k).root;
+        for (let i = 0; i < 100; i++) {
+            expect(new MerkleTree([...dataArray5k]).root).toBe(dataArray5kRoot);
+        }
+    });
 });

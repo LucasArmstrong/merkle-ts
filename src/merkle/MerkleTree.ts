@@ -164,16 +164,9 @@ export class MerkleTree implements IMerkleTree {
         let hashIndex = 0;
         while (hashIndex <= hashArray.length - 1) {
             if (hashArray.length - hashIndex > 1) {
-                const hashA: string = hashArray[hashIndex++];
-                const hashB: string = hashArray[hashIndex++];
-                if (hashA && hashB) {
-                    hashed.push(this.createHash(hashA + hashB));
-                }
+                hashed.push(this.createHash(hashArray[hashIndex++] + hashArray[hashIndex++]));
             } else if (hashArray.length - hashIndex === 1) {
-                const lastHash: string = hashArray[hashIndex++];
-                if (lastHash) {
-                    hashed.push(this.createHash(lastHash + lastHash));
-                }
+                hashed.push(this.createHash(hashArray[hashIndex] + hashArray[hashIndex++]));
             }
         }
         
@@ -182,7 +175,7 @@ export class MerkleTree implements IMerkleTree {
 
         // more than one hash means we can process another step
         if (hashed.length > 1) {
-            return this.process(hashed.slice());
+            return this.process(hashed);
         }
 
         // one hash means the root has been found
