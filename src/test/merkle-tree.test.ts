@@ -250,10 +250,6 @@ describe ('Constructs a merkle tree', () => {
         const dataArray = ['Test string','More','Stuff',44,55,66,77,true,false,{test:'this'}];
         expect(MerkleTree.maxDepthFromDataArray(dataArray)).toBe(5);
 
-        const dataArrayOneMillion = new Array(1000000);
-        const maxDepthOneMillion = MerkleTree.maxDepthFromDataArray(dataArrayOneMillion);
-        expect(maxDepthOneMillion).toBe(21);
-
         const dataArray500filled = new Array(500).fill(Math.random());
         const maxDepth500 = MerkleTree.maxDepthFromDataArray(dataArray500filled);
         expect(maxDepth500).toBe(10);
@@ -265,5 +261,26 @@ describe ('Constructs a merkle tree', () => {
         expect(maxDepth1).toBe(1);
         const treeOneData = new MerkleTree(dataArrayOne);
         expect(treeOneData.hashRecords.length).toBe(maxDepth1);
+
+        const dataArray50k = new Array(50000).fill(Math.random());
+        const maxDepth50k = MerkleTree.maxDepthFromDataArray(dataArray50k);
+        expect(maxDepth50k).toBe(17);
+        const treeData50k = new MerkleTree(dataArray50k); 
+        expect(treeData50k.hashRecords.length).toBe(maxDepth50k);
+
+        const dataArray100k = new Array(100000).fill(Math.random());
+        const maxDepth100k = MerkleTree.maxDepthFromDataArray(dataArray100k);
+        expect(maxDepth100k).toBe(18);
+        const treeData100k = new MerkleTree(dataArray100k); 
+        expect(treeData100k.hashRecords.length).toBe(maxDepth100k);
+
+        /**
+         * MerkleTree creation performance hit is noticable at 1,000,000
+        const dataArray1mill = new Array(1000000).fill(Math.random());
+        const maxDepth1mill = MerkleTree.maxDepthFromDataArray(dataArray1mill);
+        expect(maxDepth1mill).toBe(21);
+        const treeData1mill = new MerkleTree(dataArray1mill); 
+        expect(treeData1mill.hashRecords.length).toBe(maxDepth1mill);
+        */
     });
 });

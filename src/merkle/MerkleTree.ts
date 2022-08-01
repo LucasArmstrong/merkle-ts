@@ -161,15 +161,16 @@ export class MerkleTree implements IMerkleTree {
 
         // digest elements from the hash array to create the nodes
         const hashed: string[] = [];
-        while (hashArray.length > 0) {
-            if (hashArray.length > 1) {
-                const hashA: string = hashArray.shift() ?? '';
-                const hashB: string = hashArray.shift() ?? '';
+        let hashIndex = 0;
+        while (hashIndex <= hashArray.length - 1) {
+            if (hashArray.length - hashIndex > 1) {
+                const hashA: string = hashArray[hashIndex++];
+                const hashB: string = hashArray[hashIndex++];
                 if (hashA && hashB) {
                     hashed.push(this.createHash(hashA + hashB));
                 }
-            } else if (hashArray.length === 1) {
-                const lastHash: string = hashArray.shift() ?? '';
+            } else if (hashArray.length - hashIndex === 1) {
+                const lastHash: string = hashArray[hashIndex++];
                 if (lastHash) {
                     hashed.push(this.createHash(lastHash + lastHash));
                 }
