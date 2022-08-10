@@ -91,9 +91,7 @@ export class MerkleTree implements IMerkleTree {
      * @param dataArray 
      */
     public addNodes(dataArray: MerkleDataType[]): void {
-        dataArray.forEach(data => {
-            this.dataArray.push(data);
-        });
+        this.dataArray = this.dataArray.concat(dataArray);
         this.buildTree();
     }
 
@@ -135,10 +133,10 @@ export class MerkleTree implements IMerkleTree {
 
         if (this.dataArray.length > 1) {
             const hashed: string[] = [];
-            for (const {index, value} of this.dataArray.map((value, index) => ({ index, value }))) {
-                const eleHash = this.createHash(value);
+            for (let i = 0; i < this.dataArray.length; i++) {
+                const eleHash = this.createHash(this.dataArray[i]);
                 hashed.push(eleHash);
-                this.dataHashIndex[eleHash] = index;
+                this.dataHashIndex[eleHash] = i;
             }
             this._hashRecords.push(hashed);
             this.root = this.process(hashed);
@@ -190,13 +188,20 @@ export class MerkleTree implements IMerkleTree {
     public static maxDepthFromDataArray(dataArray: MerkleDataType[]): number {
         let currentLength = dataArray.length;
         let depth = 1;
+
+        // currently testing performance of bitwise operations
         while (currentLength > 1) {
-            if (currentLength % 2 !== 0) {
-                currentLength++;
+            //if (currentLength % 2 !== 0) {
+            if (currentLength & 1) {
+                // currentLength++;
+                currentLength = (-(~currentLength));
             }
-            currentLength = currentLength / 2;
-            depth++;
+            // currentLength = currentLength / 2;
+            currentLength = currentLength >> 1;
+            //depth++;
+            depth = (-(~depth));
         }
+
         return depth;
     }
 

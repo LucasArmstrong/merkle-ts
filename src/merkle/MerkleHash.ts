@@ -84,14 +84,44 @@ export enum HashAlgorithm {
 export class MerkleHash {
     
     /**
+     * @var ENABLE_CACHING
+     */
+    public static ENABLE_CACHING = false;
+
+    public static BENCHMARK_ITERATIONS = 300000;
+
+    /**
+     * @var hashCache - Cache for all the hashes, keyed by algorithm + data string
+     */
+    private static hashCache: {[algo_dataString: string]: string} = {};
+
+    /**
      * @method createHash - takes a MerkleDataType payload to generate a
      * 
      * @param data MerkleDataType - The value used to generate a hash
+     * @param hashAlgorithm HashAlgorithm - hash algorithm to use
      * @returns {string}
      */
-     static createHash(data: MerkleDataType, hashAlgorithm: HashAlgorithm = HashAlgorithm.sha256): string {
+    static createHash(data: MerkleDataType, hashAlgorithm: HashAlgorithm = HashAlgorithm.sha256): string {
         const dataString: string = this.convertToString(data);
-        return crypto.createHash(hashAlgorithm.toString()).update(dataString).digest('hex');
+        let algo_dataString: string = '';
+
+        if (this.ENABLE_CACHING) {
+            algo_dataString = hashAlgorithm + dataString;
+            if (typeof this.hashCache[algo_dataString] !== 'undefined') {
+                return this.hashCache[algo_dataString];
+            }
+        }
+        
+        const hash = crypto.createHash(hashAlgorithm)
+                            .update(dataString)
+                            .digest('hex');
+
+        if (this.ENABLE_CACHING) {
+            this.hashCache[algo_dataString] = hash;
+        }
+
+        return hash;
     }
 
     /**

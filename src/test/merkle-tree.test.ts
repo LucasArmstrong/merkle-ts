@@ -2,17 +2,16 @@ import { IMerkleTree, MerkleTree } from '../merkle/MerkleTree';
 import { readFileSync } from 'fs';
 import { HashAlgorithm, MerkleHash } from '../merkle/MerkleHash';
 
-describe ('Test hashList.txt', () => {
-    test ('Loads into an array', () => {
+
+describe ('MerkleTree', () => {
+    test ('#validate hashList.txt data', () => {
         const hashListArray: string[] = readFileSync('exampleAssets/hashList.txt').toString().split("\n");
         const merkleTree: MerkleTree = new MerkleTree(hashListArray);
         expect(merkleTree.root)
             .toBe('8b65097db5948da501a243395088d2177eb94da1289570a22dab46a6d05bcd1b');
     });
-});
 
-describe ('Constructs a merkle tree', () => {
-    test ('Enforce a data array of at least 1 length', () => {
+    test ('#enforce minimum data array length', () => {
         expect(() => {
             let tree: IMerkleTree = new MerkleTree([]);
         }).toThrowError('dataArray has a minimum length of 1');
@@ -26,7 +25,7 @@ describe ('Constructs a merkle tree', () => {
         }).toThrowError('dataArray has a minimum length of 1');
     });
 
-    test ('Determine if hash works for a single value', () => {
+    test ('#validate hash from single value', () => {
         let tree: IMerkleTree = new MerkleTree([1]);
         expect(tree.root)
             .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
@@ -48,7 +47,7 @@ describe ('Constructs a merkle tree', () => {
         expect(tree.createHash('Test string')).toBe('0fd3dbec9730101bff92acc820befc34');
     });
 
-    test ('#addNode , #addNodes - Determine if adding additional nodes works', () => {
+    test ('#addNode & #addNodes', () => {
         let tree: IMerkleTree = new MerkleTree([1]);
         expect(tree.root)
             .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
@@ -79,7 +78,7 @@ describe ('Constructs a merkle tree', () => {
 
     });
     
-    test ('Determine if hash works for a multiple values', () => {
+    test ('#validate hash from multiples', () => {
         let tree: IMerkleTree = new MerkleTree([1,2]);
         expect(tree.root)
             .toBe('33b675636da5dcc86ec847b38c08fa49ff1cace9749931e0a5d4dfdbdedd808a');
@@ -143,7 +142,7 @@ describe ('Constructs a merkle tree', () => {
         expect(tree.root).toBe('744556995f960fddfe4303ab4175c601');
     });
 
-    test ('Prove the merkle tree is created properly', () => {
+    test ('#validate root', () => {
         let tree1 = new MerkleTree([1]);
         expect(tree1.root)
             .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
@@ -261,7 +260,10 @@ describe ('Constructs a merkle tree', () => {
         expect(maxDepth1).toBe(1);
         const treeOneData = new MerkleTree(dataArrayOne);
         expect(treeOneData.hashRecords.length).toBe(maxDepth1);
+    });
 
+    test('#benchmark Int MerkleTree with caching', () => {
+        MerkleHash.ENABLE_CACHING = true;
         const dataArray50k = new Array(50000).fill(Math.random());
         const maxDepth50k = MerkleTree.maxDepthFromDataArray(dataArray50k);
         expect(maxDepth50k).toBe(17);
@@ -274,27 +276,66 @@ describe ('Constructs a merkle tree', () => {
         const treeData100k = new MerkleTree(dataArray100k); 
         expect(treeData100k.hashRecords.length).toBe(maxDepth100k);
 
-        /**
-         * MerkleTree creation performance hit is noticable at 1,000,000
+        const dataArray500k = new Array(500000).fill(Math.random());
+        const maxDepth500k = MerkleTree.maxDepthFromDataArray(dataArray500k);
+        expect(maxDepth500k).toBe(20);
+        const treeData500k = new MerkleTree(dataArray500k); 
+        expect(treeData500k.hashRecords.length).toBe(maxDepth500k);
+
         const dataArray1mill = new Array(1000000).fill(Math.random());
         const maxDepth1mill = MerkleTree.maxDepthFromDataArray(dataArray1mill);
         expect(maxDepth1mill).toBe(21);
         const treeData1mill = new MerkleTree(dataArray1mill); 
         expect(treeData1mill.hashRecords.length).toBe(maxDepth1mill);
-        */
     });
 
-    test('validate idempotency', () => {
-        const dataArray = ['Test string','More','Stuff',44,55,66,77,true,false,{test:'this'}];
-        const dataRoot = new MerkleTree(dataArray).root;
-        for (let i = 0; i < 100; i++) {
-            expect(new MerkleTree([...dataArray]).root).toBe(dataRoot);
+    test('#benchmark String MerkleTree with caching', () => {
+        MerkleHash.ENABLE_CACHING = true;
+        function randomBitString() {
+            return ['0','1'][Math.floor(Math.random() * 1)];
         }
+        const dataArray50k = new Array(50000).fill(randomBitString());
+        const maxDepth50k = MerkleTree.maxDepthFromDataArray(dataArray50k);
+        expect(maxDepth50k).toBe(17);
+        const treeData50k = new MerkleTree(dataArray50k); 
+        expect(treeData50k.hashRecords.length).toBe(maxDepth50k);
 
-        const dataArray5k = new Array(5000).fill(Math.random());
-        const dataArray5kRoot = new MerkleTree(dataArray5k).root;
-        for (let i = 0; i < 100; i++) {
-            expect(new MerkleTree([...dataArray5k]).root).toBe(dataArray5kRoot);
+        const dataArray100k = new Array(100000).fill(randomBitString());
+        const maxDepth100k = MerkleTree.maxDepthFromDataArray(dataArray100k);
+        expect(maxDepth100k).toBe(18);
+        const treeData100k = new MerkleTree(dataArray100k); 
+        expect(treeData100k.hashRecords.length).toBe(maxDepth100k);
+
+        const dataArray500k = new Array(500000).fill(randomBitString());
+        const maxDepth500k = MerkleTree.maxDepthFromDataArray(dataArray500k);
+        expect(maxDepth500k).toBe(20);
+        const treeData500k = new MerkleTree(dataArray500k); 
+        expect(treeData500k.hashRecords.length).toBe(maxDepth500k);
+
+        const dataArray1mill = new Array(1000000).fill(randomBitString());
+        const maxDepth1mill = MerkleTree.maxDepthFromDataArray(dataArray1mill);
+        expect(maxDepth1mill).toBe(21);
+        const treeData1mill = new MerkleTree(dataArray1mill); 
+        expect(treeData1mill.hashRecords.length).toBe(maxDepth1mill);
+    });
+
+    test('#benchmark MerkleHash sha256', () => {
+        MerkleHash.ENABLE_CACHING = false;
+        for(let i = 0; i < MerkleHash.BENCHMARK_ITERATIONS; i++) {
+            MerkleHash.createHash(i, HashAlgorithm.sha256);
         }
     });
+    test('#benchmark MerkleHash md5', () => {
+        MerkleHash.ENABLE_CACHING = false;
+        for(let i = 0; i < MerkleHash.BENCHMARK_ITERATIONS; i++) {
+            MerkleHash.createHash(i, HashAlgorithm.md5);
+        }
+    });
+    test('#benchmark MerkleHash sha1', () => {
+        MerkleHash.ENABLE_CACHING = false;
+        for(let i = 0; i < MerkleHash.BENCHMARK_ITERATIONS; i++) {
+            MerkleHash.createHash(i, HashAlgorithm.sha1);
+        }
+    });
+
 });
