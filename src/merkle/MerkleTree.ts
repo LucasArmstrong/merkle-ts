@@ -107,8 +107,10 @@ export class MerkleTree implements IMerkleTree {
      */
     public updateNodeAt(index: number, data: MerkleDataType): boolean {
         if (index < this._dataArray.length) {
+            const isLastEle = index === this._dataArray.length - 1;
             this._dataArray[index] = data;
             this._hashRecords[0][index] = this.createHash(data);
+            
             for (let i = 1; i < this._hashRecords.length; i++) {
                 const oldIndex = index;
                 if (index < 2) {
@@ -130,6 +132,10 @@ export class MerkleTree implements IMerkleTree {
                     rightHash = this._hashRecords[i - 1][oldIndex];
                 }
                 this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
+                if (index % 2 === 0 && isLastEle) {
+                    this._hashRecords[i][index + 1] = this._hashRecords[i][index];
+                }
+
                 if (index === 0) {
                     this.root = this._hashRecords[i][index];
                 }

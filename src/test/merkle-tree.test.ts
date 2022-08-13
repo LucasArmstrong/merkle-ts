@@ -263,22 +263,62 @@ describe ('MerkleTree', () => {
     });
 
     test('#updateNodeAt', () => {
+        let failTree = new MerkleTree([1]);
+        expect(failTree.updateNodeAt(0, 'test')).toBeTruthy();
+        expect(failTree.dataArray[0]).toBe('test');
+        expect(failTree.updateNodeAt(5, 'test')).toBeFalsy();
+
         let tree = new MerkleTree([1,2,3,4,5,6,7,8]);
         expect(tree.root).toBe('c27450cd3fd4df029145f3437ae9c381e0ae55e8400de06cb973005b36d7b222');
         expect(tree.dataArray[3]).toBe(4);
-        tree.updateNodeAt(3, 10);
+        expect(tree.updateNodeAt(3, 10)).toBeTruthy();
         expect(tree.dataArray[3]).toBe(10);
 
         let tree2 = new MerkleTree([1,2,3,10,5,6,7,8]);
         expect(tree2.root).toBe(tree.root);
 
-        tree.updateNodeAt(0, 0);
-        tree.updateNodeAt(7, 10000);
+        expect(tree.updateNodeAt(0, 0)).toBeTruthy();
+        expect(tree.updateNodeAt(7, 10000)).toBeTruthy();
         let tree3 = new MerkleTree([0,2,3,10,5,6,7,10000]);
         expect(tree3.root).toBe(tree.root);
-        tree2.updateNodeAt(0, 0);
-        tree2.updateNodeAt(7, 10000);
+        expect(tree2.updateNodeAt(0, 0)).toBeTruthy();
+        expect(tree2.updateNodeAt(7, 10000)).toBeTruthy();
         expect(tree3.root).toBe(tree2.root);
+
+
+        expect(tree3.updateNodeAt(4, 222)).toBeTruthy();
+        expect(tree3.dataArray[4]).toBe(222);
+        expect(tree3.updateNodeAt(tree3.dataArray.length-1, 123)).toBeTruthy();
+        expect(tree3.dataArray[7]).toBe(123);
+        let treeCopyData = new MerkleTree(tree3.dataArray.slice());
+        expect(treeCopyData.root).toBe(tree3.root);
+
+        let medA = new Array(10000).fill(Math.random());
+        let medTree = new MerkleTree(medA.slice());
+        let medTree2 = new MerkleTree(medTree.dataArray.slice());
+        expect(medTree2.root).toBe(medTree.root);
+        expect(medTree.updateNodeAt(4000, 9999)).toBeTruthy();
+        expect(medTree.updateNodeAt(9999, 9999)).toBeTruthy();
+        expect(medTree.dataArray[4000]).toBe(9999);
+        expect(medTree.dataArray[9999]).toBe(9999);
+        let medTree3 = new MerkleTree(medTree.dataArray.slice());
+        expect(medTree3.root).toBe(medTree.root);
+
+        let largeArray1 = new Array(50000).fill(Math.random());
+        let treeLarge1 = new MerkleTree(largeArray1.slice());
+        let root1 = treeLarge1.root;
+        expect(treeLarge1.updateNodeAt(40000, 9999)).toBeTruthy();
+        expect(treeLarge1.updateNodeAt(49999, 9999)).toBeTruthy();
+        expect(treeLarge1.dataArray[40000]).toBe(9999);
+        expect(treeLarge1.dataArray[49999]).toBe(9999);
+        expect(root1 === treeLarge1.root).toBeFalsy();
+        let treeLarge2 = new MerkleTree(treeLarge1.dataArray.slice());
+        expect(treeLarge2.root).toBe(treeLarge1.root);
+        expect(treeLarge1.updateNodeAt(35999, 123)).toBeTruthy();
+        expect(treeLarge2.updateNodeAt(35999, 123)).toBeTruthy();
+        expect(treeLarge1.dataArray[35999]).toBe(123);
+        expect(treeLarge2.dataArray[35999]).toBe(123);
+        expect(treeLarge2.root).toBe(treeLarge1.root);
     });
 
     test('#benchmark Int MerkleTree with caching', () => {
