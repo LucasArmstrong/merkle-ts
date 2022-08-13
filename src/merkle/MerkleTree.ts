@@ -57,7 +57,10 @@ export class MerkleTree implements IMerkleTree {
     /**
      * @var dataArray - stores a copy of the MerkleDataType[] that the tree is populated by
      */
-    private dataArray: MerkleDataType[] = [];
+    private _dataArray: MerkleDataType[] = [];
+    public get dataArray(): MerkleDataType[] {
+        return this._dataArray;
+    }
 
     /**
      * @var dataHashIndex - A hash key index that points to a data's correpsonding dataArray index
@@ -71,7 +74,7 @@ export class MerkleTree implements IMerkleTree {
      */
     constructor(dataArray: MerkleDataType[], type: HashAlgorithm = HashAlgorithm.sha256) {
         this.type = type;
-        this.dataArray = dataArray;
+        this._dataArray = dataArray;
         this.buildTree();
     }
 
@@ -81,7 +84,7 @@ export class MerkleTree implements IMerkleTree {
      * @param data 
      */
     public addNode(data: MerkleDataType): void {
-        this.dataArray.push(data);
+        this._dataArray.push(data);
         this.buildTree();
     }
 
@@ -91,8 +94,49 @@ export class MerkleTree implements IMerkleTree {
      * @param dataArray 
      */
     public addNodes(dataArray: MerkleDataType[]): void {
-        this.dataArray = this.dataArray.concat(dataArray);
+        this._dataArray = this._dataArray.concat(dataArray);
         this.buildTree();
+    }
+
+    /**
+     * @method updateNodeAt - update a data node at index and rebuild hash path to the root hash
+     * 
+     * @param index
+     * @param data 
+     * @returns boolean 
+     */
+    public updateNodeAt(index: number, data: MerkleDataType): boolean {
+        if (index < this._dataArray.length) {
+            this._dataArray[index] = data;
+            this._hashRecords[0][index] = this.createHash(data);
+            for (let i = 1; i < this._hashRecords.length; i++) {
+                const oldIndex = index;
+                if (index < 2) {
+                    index = 0;
+                } else if (index % 2 === 0) {
+                    index /= 2;
+                } else {
+                    index -= 1;
+                    index /= 2;
+                }
+                
+                let leftHash = '';
+                let rightHash = '';
+                if (oldIndex % 2 === 0) {
+                    leftHash = this._hashRecords[i - 1][oldIndex];
+                    rightHash = this._hashRecords[i - 1][oldIndex + 1];
+                } else {
+                    leftHash = this._hashRecords[i - 1][oldIndex - 1];
+                    rightHash = this._hashRecords[i - 1][oldIndex];
+                }
+                this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
+                if (index === 0) {
+                    this.root = this._hashRecords[i][index];
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -113,7 +157,7 @@ export class MerkleTree implements IMerkleTree {
      */
     public getDataFromHash(hashKey: string): MerkleDataType | null {
         if (typeof this.dataHashIndex[hashKey] !== undefined) {
-            return this.dataArray[this.dataHashIndex[hashKey]] ?? null;
+            return this._dataArray[this.dataHashIndex[hashKey]] ?? null;
         }
         return null;
     }
@@ -124,24 +168,24 @@ export class MerkleTree implements IMerkleTree {
      * @param dataArray MerkleDataType[] - The values used to generate the Merkle Tree
      */
     private buildTree(): void {
-        if (!this.dataArray.length) {
+        if (!this._dataArray.length) {
             throw new Error('dataArray has a minimum length of 1');
         }
 
         this._hashRecords = [];
         this.dataHashIndex = {};
 
-        if (this.dataArray.length > 1) {
+        if (this._dataArray.length > 1) {
             const hashed: string[] = [];
-            for (let i = 0; i < this.dataArray.length; i++) {
-                const eleHash = this.createHash(this.dataArray[i]);
+            for (let i = 0; i < this._dataArray.length; i++) {
+                const eleHash = this.createHash(this._dataArray[i]);
                 hashed.push(eleHash);
                 this.dataHashIndex[eleHash] = i;
             }
             this._hashRecords.push(hashed);
             this.root = this.process(hashed);
-        } else if (this.dataArray.length === 1) {
-            this.root = this.createHash(this.dataArray[0]);
+        } else if (this._dataArray.length === 1) {
+            this.root = this.createHash(this._dataArray[0]);
             this._hashRecords.push([this.root]);
         }
     }

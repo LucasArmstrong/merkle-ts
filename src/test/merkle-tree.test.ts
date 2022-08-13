@@ -262,6 +262,25 @@ describe ('MerkleTree', () => {
         expect(treeOneData.hashRecords.length).toBe(maxDepth1);
     });
 
+    test('#updateNodeAt', () => {
+        let tree = new MerkleTree([1,2,3,4,5,6,7,8]);
+        expect(tree.root).toBe('c27450cd3fd4df029145f3437ae9c381e0ae55e8400de06cb973005b36d7b222');
+        expect(tree.dataArray[3]).toBe(4);
+        tree.updateNodeAt(3, 10);
+        expect(tree.dataArray[3]).toBe(10);
+
+        let tree2 = new MerkleTree([1,2,3,10,5,6,7,8]);
+        expect(tree2.root).toBe(tree.root);
+
+        tree.updateNodeAt(0, 0);
+        tree.updateNodeAt(7, 10000);
+        let tree3 = new MerkleTree([0,2,3,10,5,6,7,10000]);
+        expect(tree3.root).toBe(tree.root);
+        tree2.updateNodeAt(0, 0);
+        tree2.updateNodeAt(7, 10000);
+        expect(tree3.root).toBe(tree2.root);
+    });
+
     test('#benchmark Int MerkleTree with caching', () => {
         MerkleHash.ENABLE_CACHING = true;
         const dataArray50k = new Array(50000).fill(Math.random());
