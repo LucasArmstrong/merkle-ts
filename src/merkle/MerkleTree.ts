@@ -83,9 +83,13 @@ export class MerkleTree implements IMerkleTree {
      * 
      * @param data 
      */
-    public addNode(data: MerkleDataType): void {
-        this._dataArray.push(data);
-        this.buildTree();
+    public addNode(data: MerkleDataType): boolean {
+        if (this.dataArray.length < 3) {
+            this._dataArray.push(data);
+            this.buildTree();
+            return true;
+        }
+        return this.updateNodeAt(this.dataArray.length, data);
     }
 
     /**
@@ -93,9 +97,15 @@ export class MerkleTree implements IMerkleTree {
      * 
      * @param dataArray 
      */
-    public addNodes(dataArray: MerkleDataType[]): void {
-        this._dataArray = this._dataArray.concat(dataArray);
-        this.buildTree();
+    public addNodes(dataArray: MerkleDataType[]): boolean {
+        if (this._dataArray.length + this.dataArray.length < 3) {
+            this._dataArray = this._dataArray.concat(dataArray);
+            this.buildTree();
+            return true;
+        }
+        return dataArray.every((data) => {
+            return this.addNode(data);
+        });
     }
 
     /**
@@ -106,43 +116,54 @@ export class MerkleTree implements IMerkleTree {
      * @returns boolean 
      */
     public updateNodeAt(index: number, data: MerkleDataType): boolean {
-        if (index < this._dataArray.length) {
-            const isLastEle = index === this._dataArray.length - 1;
+        if (index === this._dataArray.length) { // adding a new node
+            const dataHash = this.createHash(data);
+            if (index % 2 === 0) {
+                this._hashRecords[0].push(dataHash, dataHash);
+            } else {
+                this._hashRecords[0].push(dataHash);
+            }
+            this._dataArray.push(data);
+        } else if (index < this._dataArray.length) { // updating existing node
             this._dataArray[index] = data;
             this._hashRecords[0][index] = this.createHash(data);
-            
-            for (let i = 1; i < this._hashRecords.length; i++) {
-                const oldIndex = index;
-                if (index < 2) {
-                    index = 0;
-                } else if (index % 2 === 0) {
-                    index /= 2;
-                } else {
-                    index -= 1;
-                    index /= 2;
-                }
-                
-                let leftHash = '';
-                let rightHash = '';
-                if (oldIndex % 2 === 0) {
-                    leftHash = this._hashRecords[i - 1][oldIndex];
-                    rightHash = this._hashRecords[i - 1][oldIndex + 1];
-                } else {
-                    leftHash = this._hashRecords[i - 1][oldIndex - 1];
-                    rightHash = this._hashRecords[i - 1][oldIndex];
-                }
-                this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
-                if (index % 2 === 0 && isLastEle) {
-                    this._hashRecords[i][index + 1] = this._hashRecords[i][index];
-                }
-
-                if (index === 0) {
-                    this.root = this._hashRecords[i][index];
-                }
-            }
-            return true;
+        } else {
+            return false;
         }
-        return false;
+
+        const isLastEle = index === this._dataArray.length - 1;
+        for (let i = 1; i < this._hashRecords.length; i++) {
+            const oldIndex = index;
+            if (index < 2) {
+                index = 0;
+            } else if (index % 2 === 0) {
+                index /= 2;
+            } else {
+                index -= 1;
+                index /= 2;
+            }
+            
+            let leftHash = '';
+            let rightHash = '';
+            if (oldIndex % 2 === 0) {
+                leftHash = this._hashRecords[i - 1][oldIndex];
+                rightHash = this._hashRecords[i - 1][oldIndex + 1];
+            } else {
+                leftHash = this._hashRecords[i - 1][oldIndex - 1];
+                rightHash = this._hashRecords[i - 1][oldIndex];
+            }
+            this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
+
+            if (index % 2 === 0 && isLastEle) {
+                this._hashRecords[i][index + 1] = this._hashRecords[i][index];
+            }
+
+            if (index === 0) {
+                this.root = this._hashRecords[i][index];
+            }
+        }
+
+        return true;
     }
 
     /**
