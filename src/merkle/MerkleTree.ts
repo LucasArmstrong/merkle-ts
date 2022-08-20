@@ -120,7 +120,7 @@ export class MerkleTree implements IMerkleTree {
         this._dataArray[index] = data;
         this._hashRecords[0][index] = this.createHash(data);
         for (let i = 1; i < this._hashRecords.length; i++) {
-            const oldIndex = index;
+            const previousIndex = index;
             if (index % 2 === 0) {
                 index /= 2;
             } else {
@@ -130,17 +130,16 @@ export class MerkleTree implements IMerkleTree {
             
             let leftHash = '';
             let rightHash = '';
-            if (oldIndex % 2 === 0) {
-                leftHash = this._hashRecords[i - 1][oldIndex];
-                rightHash = this._hashRecords[i - 1][oldIndex + 1];
+            if (previousIndex % 2 === 0) {
+                leftHash = this._hashRecords[i - 1][previousIndex];
+                rightHash = this._hashRecords[i - 1][previousIndex + 1];
                 if (typeof rightHash === 'undefined') {
                     rightHash = leftHash;
                 }
             } else {
-                leftHash = this._hashRecords[i - 1][oldIndex - 1];
-                rightHash = this._hashRecords[i - 1][oldIndex];
+                leftHash = this._hashRecords[i - 1][previousIndex - 1];
+                rightHash = this._hashRecords[i - 1][previousIndex];
             }
-            
             this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
 
             if (index === 0) {
