@@ -83,29 +83,27 @@ export class MerkleTree implements IMerkleTree {
      * 
      * @param data 
      */
-    public addNode(data: MerkleDataType): boolean {
-        if (this.dataArray.length < 3) {
-            this._dataArray.push(data);
-            this.buildTree();
-            return true;
-        }
-        return this.updateNodeAt(this.dataArray.length, data);
+    public addNode(data: MerkleDataType): string {
+        this._dataArray.push(data);
+        this._hashRecords[0].push(this.createHash(data));
+        this._hashRecords = [this.hashRecords[0]];
+        this.root = this.process(this._hashRecords[0]);
+        return this.root;
     }
 
     /**
      * @method addNodes - adds multiple new data nodes and rebuilds the tree
      * 
-     * @param dataArray 
+     * @param addDataArray 
      */
-    public addNodes(dataArray: MerkleDataType[]): boolean {
-        if (this._dataArray.length + this.dataArray.length < 3) {
-            this._dataArray = this._dataArray.concat(dataArray);
-            this.buildTree();
-            return true;
-        }
-        return dataArray.every((data) => {
-            return this.addNode(data);
+    public addNodes(addDataArray: MerkleDataType[]): string {
+        addDataArray.forEach((data) => {
+            this._dataArray.push(data);
+            this._hashRecords[0].push(this.createHash(data));
         });
+        this._hashRecords = [this.hashRecords[0]];
+        this.root = this.process(this._hashRecords[0]);
+        return this.root;
     }
 
     /**
@@ -116,27 +114,14 @@ export class MerkleTree implements IMerkleTree {
      * @returns boolean 
      */
     public updateNodeAt(index: number, data: MerkleDataType): boolean {
-        if (index === this._dataArray.length) { // adding a new node
-            const dataHash = this.createHash(data);
-            if (index % 2 === 0) {
-                this._hashRecords[0].push(dataHash, dataHash);
-            } else {
-                this._hashRecords[0].push(dataHash);
-            }
-            this._dataArray.push(data);
-        } else if (index < this._dataArray.length) { // updating existing node
-            this._dataArray[index] = data;
-            this._hashRecords[0][index] = this.createHash(data);
-        } else {
+        if (index >= this._dataArray.length) {
             return false;
         }
-
-        const isLastEle = index === this._dataArray.length - 1;
+        this._dataArray[index] = data;
+        this._hashRecords[0][index] = this.createHash(data);
         for (let i = 1; i < this._hashRecords.length; i++) {
-            const oldIndex = index;
-            if (index < 2) {
-                index = 0;
-            } else if (index % 2 === 0) {
+            const previousIndex = index;
+            if (index % 2 === 0) {
                 index /= 2;
             } else {
                 index -= 1;
@@ -145,18 +130,17 @@ export class MerkleTree implements IMerkleTree {
             
             let leftHash = '';
             let rightHash = '';
-            if (oldIndex % 2 === 0) {
-                leftHash = this._hashRecords[i - 1][oldIndex];
-                rightHash = this._hashRecords[i - 1][oldIndex + 1];
+            if (previousIndex % 2 === 0) {
+                leftHash = this._hashRecords[i - 1][previousIndex];
+                rightHash = this._hashRecords[i - 1][previousIndex + 1];
+                if (typeof rightHash === 'undefined') {
+                    rightHash = leftHash;
+                }
             } else {
-                leftHash = this._hashRecords[i - 1][oldIndex - 1];
-                rightHash = this._hashRecords[i - 1][oldIndex];
+                leftHash = this._hashRecords[i - 1][previousIndex - 1];
+                rightHash = this._hashRecords[i - 1][previousIndex];
             }
             this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
-
-            if (index % 2 === 0 && isLastEle) {
-                this._hashRecords[i][index + 1] = this._hashRecords[i][index];
-            }
 
             if (index === 0) {
                 this.root = this._hashRecords[i][index];
