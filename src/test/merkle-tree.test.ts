@@ -48,19 +48,50 @@ describe ('MerkleTree', () => {
     });
 
     test ('#addNode & #addNodes', () => {
-        let tree: IMerkleTree = new MerkleTree([1]);
+        let tree12: MerkleTree = new MerkleTree([1,2]);
+        let tree123: MerkleTree = new MerkleTree([1,2,3]);
+        let tree1234: MerkleTree = new MerkleTree([1,2,3,4]);
+        let tree12345: MerkleTree = new MerkleTree([1,2,3,4,5]);
+        let tree123456: MerkleTree = new MerkleTree([1,2,3,4,5,6]);
+        let tree1234567: MerkleTree = new MerkleTree([1,2,3,4,5,6,7]);
+        let tree12345678: MerkleTree = new MerkleTree([1,2,3,4,5,6,7,8]);
+        let tree123456789: MerkleTree = new MerkleTree([1,2,3,4,5,6,7,8,9]);
+
+        let tree: MerkleTree = new MerkleTree([1]);
         expect(tree.root)
             .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
         tree.addNode(2);
+        expect(tree.root).toBe(tree12.root);
         expect(tree.root)
             .toBe('33b675636da5dcc86ec847b38c08fa49ff1cace9749931e0a5d4dfdbdedd808a');
-
-        tree = new MerkleTree([1]);
-        expect(tree.root)
-            .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
-        tree.addNodes([2,3]);
+        tree.addNode(3);
+        expect(tree.root).toBe(tree123.root);
         expect(tree.root)
             .toBe('f3f1917304e3af565b827d1baa9fac18d5b287ae97adda22dc51a0aef900b787');
+        tree.addNode(4);
+        expect(tree.root).toBe(tree1234.root);
+        expect(tree.root)
+            .toBe('85df8945419d2b5038f7ac83ec1ec6b8267c40fdb3b1e56ff62f6676eb855e70');
+        tree.addNode(5);
+        expect(tree.root).toBe(tree12345.root);
+        expect(tree.root)
+            .toBe('c19ce1b23fc9057eb072011d793ce33a47bb6fc3fe4cf9bf5d8f737abd3be0cb');
+        tree.addNode(6);
+        expect(tree.root).toBe(tree123456.root);
+        expect(tree.root)
+            .toBe('058bd72c469db066d7b28c9e63e1b7b05c48df9ca23dd521afd0b6154ea47be6');
+        tree.addNode(7);
+        expect(tree.root).toBe(tree1234567.root);
+        expect(tree.root)
+            .toBe('99b80facafca5b81e018de3ea24c2bc6eec81ff21fbf358b512f3df8b862199b');
+        tree.addNode(8);
+        expect(tree.root).toBe(tree12345678.root);
+        expect(tree.root)
+            .toBe('c27450cd3fd4df029145f3437ae9c381e0ae55e8400de06cb973005b36d7b222');
+        tree.addNode(9);
+        expect(tree.root).toBe(tree123456789.root);
+        expect(tree.root)
+            .toBe('e6f639f0b32f5602f36bdeb8540b5bdc4e922f55d079cdc6d81b20601f5a7d87');
 
         tree = new MerkleTree(['Test string']);
         expect(tree.root)
@@ -69,12 +100,55 @@ describe ('MerkleTree', () => {
         expect(tree.root)
             .toBe('a84e8547891590b0b7a2ec14f27f584859f96054255b1ecc134143ab8dec7c2f');
 
+        tree = new MerkleTree([1]);
+        expect(tree.root)
+            .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
+        tree.addNodes([2]);
+        expect(tree12.root).toBe(tree.root);
+        expect(tree.root)
+            .toBe('33b675636da5dcc86ec847b38c08fa49ff1cace9749931e0a5d4dfdbdedd808a');
+        
+        tree = new MerkleTree([1]);
+        expect(tree.root)
+            .toBe('6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b');
+        tree.addNodes([2,3]);
+        expect(tree123.root).toBe(tree.root);
+        expect(tree.root)
+            .toBe('f3f1917304e3af565b827d1baa9fac18d5b287ae97adda22dc51a0aef900b787');
+        tree.addNodes([4]);
+        expect(tree1234.root).toBe(tree.root);
+        expect(tree.root)
+            .toBe('85df8945419d2b5038f7ac83ec1ec6b8267c40fdb3b1e56ff62f6676eb855e70');
+        
+        tree.addNodes([5]);
+        expect(tree12345.root).toBe(tree.root);
+        expect(tree.root)
+            .toBe('c19ce1b23fc9057eb072011d793ce33a47bb6fc3fe4cf9bf5d8f737abd3be0cb');
+
         tree = new MerkleTree(['Test string']);
         expect(tree.root)
             .toBe('a3e49d843df13c2e2a7786f6ecd7e0d184f45d718d1ac1a8a63e570466e489dd');
         tree.addNodes(['More','Stuff']);
         expect(tree.root)
             .toBe('dc4aab0853b6ad15862daf14e3f95708dc06e22d39dc341be2a5b65c856e0aa4');
+        tree.addNodes([0]);
+        expect(tree.root)
+            .toBe('e4e797a805f0ef965afe5c680fd167a8ae50be52d729170d6e05f7886bef46ae');
+        tree.addNodes([0,1]);
+        expect(tree.root)
+            .toBe('ea9dc6bf1def93f67f5750e97c9ae790511e85662e4a4523aaa443f709630b52');
+        tree.addNodes([0,1,2,3,4,5]);
+        expect(tree.root)
+            .toBe('9e4f1581f75460552255ecf5fc817e254d2b69a80cebeaad15c1a85a7b248c7e');
+        tree.addNodes([0,1,2,3,4,5,6]);
+        expect(tree.root)
+            .toBe('344c256b37f27230d3041fbe4153be97f0e5f7197cd6ae9e8be9081219563dda');
+        tree = new MerkleTree(['Test string',0,1,2,3,4,5,true,false,{t:'t'}]);
+        expect(tree.root)
+            .toBe('0543d7c3eb93d174907216eda38ca06c71f4435f2533e3384fb2078b991bc27a');
+        tree.addNodes(['More','Stuff',0x00,10,20,30,40,50,true,false,{ta:'ta',tb:'tb'}]);
+        expect(tree.root)
+            .toBe('0aee812417d66476a329b2f92da831672b2cbed63bc3c7a761c081a6ddd71990');
 
     });
     
@@ -292,6 +366,23 @@ describe ('MerkleTree', () => {
         expect(tree3.dataArray[7]).toBe(123);
         let treeCopyData = new MerkleTree(tree3.dataArray.slice());
         expect(treeCopyData.root).toBe(tree3.root);
+
+        expect(tree3.updateNodeAt(0, 1234)).toBeTruthy();
+        expect(tree3.dataArray[0]).toBe(1234);
+        treeCopyData = new MerkleTree(tree3.dataArray.slice());
+        expect(treeCopyData.root).toBe(tree3.root);
+
+        let sA = new Array(11).fill(Math.random());
+        let sTree = new MerkleTree(sA.slice());
+        let sTree2 = new MerkleTree(sTree.dataArray.slice());
+        expect(sTree2.root).toBe(sTree.root);
+        expect(sTree.updateNodeAt(4, 999)).toBeTruthy();
+        expect(sTree.updateNodeAt(9, 123123)).toBeTruthy();
+        expect(sTree.dataArray[4]).toBe(999);
+        expect(sTree.dataArray[9]).toBe(123123);
+        let sTree3 = new MerkleTree(sTree.dataArray.slice());
+        expect(sTree3.dataArray).toEqual(sTree.dataArray);
+        expect(sTree3.root).toBe(sTree.root);
 
         let medA = new Array(10000).fill(Math.random());
         let medTree = new MerkleTree(medA.slice());
