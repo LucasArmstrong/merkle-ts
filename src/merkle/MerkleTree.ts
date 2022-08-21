@@ -87,25 +87,51 @@ export class MerkleTree implements IMerkleTree {
      */
     public addNode(data: MerkleDataType): string {
         this._dataArray.push(data);
-        //this._hashRecords[0].push(this.createHash(data));
-        //this._hashRecords = [this.hashRecords[0]];
-        //this.root = this.process(this._hashRecords[0]);
+        this._hashRecords[0].push(this.createHash(data));
+
+        let parentIndex = this._dataArray.length-1;
+        let leftHash = '';
+        let rightHash = '';
 
         if (this._dataArray.length === 2) {
-            //this._hashRecords[1] = [this.createHash(this._hashRecords[0][0] + this._hashRecords[0][1])]
+            leftHash = this._hashRecords[0][parentIndex-1];
+            rightHash = this._hashRecords[0][parentIndex];
+            const newHash = this.createHash(leftHash + rightHash);
+            this._hashRecords[1] = [newHash];
+            this.root = this._hashRecords[1][0];
         } else {
-            let parentIndex = this._dataArray.length-1;
-            for (let i = 1; i < this.hashRecords.length; i++) {
+            let i = 1;
+            while (parentIndex > 0) {
                 const previousIndex = parentIndex;
-                const nextIndex = parentIndex + 1;
-                if (parentIndex % 2 === 0) { //even
+                const even = parentIndex % 2 === 0;
+
+                if (even) {
                     parentIndex /= 2;
-                } else { //odd
+                } else {
                     parentIndex -= 1;
                     parentIndex /= 2;
                 }
+
+                if (even) {
+                    leftHash = this._hashRecords[i - 1][previousIndex];
+                    rightHash = leftHash;
+                } else {
+                    leftHash = this._hashRecords[i - 1][previousIndex - 1];
+                    rightHash = this._hashRecords[i - 1][previousIndex];
+                }
+
+                if (!this._hashRecords[i]) {
+                    this._hashRecords[i] = [];
+                }
+                this._hashRecords[i][parentIndex] = this.createHash(leftHash + rightHash);
+
+                if (parentIndex === 0) {
+                    this.root = this._hashRecords[i][parentIndex];
+                }
+                
+                i++;
             }
-            }
+            
         }
 
         return this.root;
@@ -118,11 +144,8 @@ export class MerkleTree implements IMerkleTree {
      */
     public addNodes(addDataArray: MerkleDataType[]): string {
         addDataArray.forEach((data) => {
-            this._dataArray.push(data);
-            this._hashRecords[0].push(this.createHash(data));
+           this.addNode(data);
         });
-        this._hashRecords = [this.hashRecords[0]];
-        this.root = this.process(this._hashRecords[0]);
         return this.root;
     }
 
