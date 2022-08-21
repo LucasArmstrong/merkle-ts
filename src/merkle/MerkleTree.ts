@@ -78,6 +78,8 @@ export class MerkleTree implements IMerkleTree {
         this.buildTree();
     }
 
+
+
     /**
      * @method addNode - adds a new data node and rebuilds the tree
      * 
@@ -85,9 +87,27 @@ export class MerkleTree implements IMerkleTree {
      */
     public addNode(data: MerkleDataType): string {
         this._dataArray.push(data);
-        this._hashRecords[0].push(this.createHash(data));
-        this._hashRecords = [this.hashRecords[0]];
-        this.root = this.process(this._hashRecords[0]);
+        //this._hashRecords[0].push(this.createHash(data));
+        //this._hashRecords = [this.hashRecords[0]];
+        //this.root = this.process(this._hashRecords[0]);
+
+        if (this._dataArray.length === 2) {
+            //this._hashRecords[1] = [this.createHash(this._hashRecords[0][0] + this._hashRecords[0][1])]
+        } else {
+            let parentIndex = this._dataArray.length-1;
+            for (let i = 1; i < this.hashRecords.length; i++) {
+                const previousIndex = parentIndex;
+                const nextIndex = parentIndex + 1;
+                if (parentIndex % 2 === 0) { //even
+                    parentIndex /= 2;
+                } else { //odd
+                    parentIndex -= 1;
+                    parentIndex /= 2;
+                }
+            }
+            }
+        }
+
         return this.root;
     }
 
@@ -132,10 +152,7 @@ export class MerkleTree implements IMerkleTree {
             let rightHash = '';
             if (previousIndex % 2 === 0) {
                 leftHash = this._hashRecords[i - 1][previousIndex];
-                rightHash = this._hashRecords[i - 1][previousIndex + 1];
-                if (typeof rightHash === 'undefined') {
-                    rightHash = leftHash;
-                }
+                rightHash = this._hashRecords[i - 1][previousIndex + 1] ?? leftHash;
             } else {
                 leftHash = this._hashRecords[i - 1][previousIndex - 1];
                 rightHash = this._hashRecords[i - 1][previousIndex];
