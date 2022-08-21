@@ -93,7 +93,7 @@ export class MerkleTree implements IMerkleTree {
         let leftHash = '';
         let rightHash = '';
 
-        if (this._dataArray.length === 2) {
+        if (this._dataArray.length <= 2) {
             leftHash = this._hashRecords[0][parentIndex-1];
             rightHash = this._hashRecords[0][parentIndex];
             const newHash = this.createHash(leftHash + rightHash);

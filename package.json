@@ -4,6 +4,7 @@
   "description": "Merkle tree class and utilities in TypeScript",
   "scripts": {
     "test": "jest --verbose",
+    "benchmark": "env BENCHMARK=true; jest --verbose",
     "process": "npx ts-node index.ts",
     "build": "tsc",
     "lint": "npx eslint .",
