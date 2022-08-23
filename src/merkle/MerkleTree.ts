@@ -110,15 +110,13 @@ export class MerkleTree implements IMerkleTree {
                     parentIndex = (parentIndex << 1) + (~parentIndex);
                     // parentIndex /= 2;
                     parentIndex = parentIndex >> 1;
-                } else {
-                    // parentIndex /= 2;
-                    parentIndex = parentIndex >> 1;
-                }
 
-                if (odd) {
                     leftHash = this._hashRecords[recordIndex - 1][previousIndex - 1];
                     rightHash = this._hashRecords[recordIndex - 1][previousIndex];
                 } else {
+                    // parentIndex /= 2;
+                    parentIndex = parentIndex >> 1;
+
                     leftHash = this._hashRecords[recordIndex - 1][previousIndex];
                     rightHash = leftHash;
                 }
@@ -167,25 +165,25 @@ export class MerkleTree implements IMerkleTree {
         this._hashRecords[0][index] = this.createHash(data);
         for (let i = 1; i < this._hashRecords.length; i++) {
             const previousIndex = index;
+            let leftHash = '';
+            let rightHash = '';
+
             if (index & 1) { // index % 2 !== 0
                 // index -= 1;
                 index = (index << 1) + (~index);
                 // index /= 2;
                 index = index >> 1;
-            } else {
-                // index /= 2;
-                index = index >> 1;
-            }
-            
-            let leftHash = '';
-            let rightHash = '';
-            if (previousIndex & 1) { //previousIndex % 2 !== 0
+
                 leftHash = this._hashRecords[i - 1][previousIndex - 1];
                 rightHash = this._hashRecords[i - 1][previousIndex];
             } else {
+                // index /= 2;
+                index = index >> 1;
+
                 leftHash = this._hashRecords[i - 1][previousIndex];
                 rightHash = this._hashRecords[i - 1][previousIndex + 1] ?? leftHash;
             }
+            
             this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
 
             if (index === 0) {
