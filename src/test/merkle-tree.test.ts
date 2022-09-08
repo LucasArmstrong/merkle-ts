@@ -500,7 +500,7 @@ describe ('MerkleTree', () => {
             }
         });
     
-        test('#benchmark Large Binary String sha256', () => {
+        test('#benchmark addNode - Large Binary String sha256', () => {
             MerkleHash.ENABLE_CACHING = true;
             const tree = new MerkleTree(new Array(1000000).fill('1'), HashAlgorithm.sha256);
             for(let i = 0; i < MerkleHash.BENCHMARK_ITERATIONS; i++) {
@@ -514,7 +514,7 @@ describe ('MerkleTree', () => {
             expect(tree.root).toBe(testTree.root);
         });
     
-        test('#benchmark Large Binary String sha512', () => {
+        test('#benchmark addNode - Large Binary String sha512', () => {
             MerkleHash.ENABLE_CACHING = true;
             const tree = new MerkleTree(new Array(1000000).fill('1'), HashAlgorithm.sha512);
             for(let i = 0; i < MerkleHash.BENCHMARK_ITERATIONS; i++) {
@@ -523,6 +523,34 @@ describe ('MerkleTree', () => {
             }
             expect(tree.root)
                 .toBe('5e0b6e2b26fdf307a1b69e8f9b1b9cd3538c19e983b1e6851ceb941166c19895c3db60719265a7fe6937ad613a51fc1385452f795b854eb73eb7a720582160a3');
+            
+            const testTree = new MerkleTree(tree.dataArray, HashAlgorithm.sha512);
+            expect(tree.root).toBe(testTree.root);
+        });
+
+        test('#benchmark addNode - Super Large Binary String sha256', () => {
+            MerkleHash.ENABLE_CACHING = true;
+            const tree = new MerkleTree(new Array(10000000).fill('1'), HashAlgorithm.sha256);
+            for(let i = 0; i < MerkleHash.BENCHMARK_ITERATIONS; i++) {
+                let num = i % 2 === 0 ? '1' : '0';
+                tree.addNode(num);
+            }
+            expect(tree.root)
+                .toBe('ba69f6c65cb2e77d8195ff25cfdbfa49659f371b17b9a3ece055d6e017d973ad');
+            
+            const testTree = new MerkleTree(tree.dataArray, HashAlgorithm.sha256);
+            expect(tree.root).toBe(testTree.root);
+        });
+
+        test('#benchmark addNode - Super Large Binary String sha512', () => {
+            MerkleHash.ENABLE_CACHING = true;
+            const tree = new MerkleTree(new Array(10000000).fill('1'), HashAlgorithm.sha512);
+            for(let i = 0; i < MerkleHash.BENCHMARK_ITERATIONS; i++) {
+                let num = i % 2 === 0 ? '1' : '0';
+                tree.addNode(num);
+            }
+            expect(tree.root)
+                .toBe('d71d5b05d8a62c67392add22c6800f194b8a335742823e2bd72cdd38711b5fcd3d2819edac21105970f6b17b7edcf5e0cfe6637866a2b06894512eebff118c4d');
             
             const testTree = new MerkleTree(tree.dataArray, HashAlgorithm.sha512);
             expect(tree.root).toBe(testTree.root);
