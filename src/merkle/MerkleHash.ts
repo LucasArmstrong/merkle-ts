@@ -5,12 +5,8 @@
  */
 
 /**
- * @import node:crypto - Used to calculate one way hashes
- * @import fs.createReadStream - For creating a hash from a file
  * @import MerkleDataType - all the data types used in MerkleTree
  */
-import * as crypto from 'node:crypto';
-import { createReadStream } from 'fs';
 import { MerkleDataType } from "./MerkleTree";
 
 /**
@@ -100,9 +96,9 @@ export class MerkleHash {
      * 
      * @param data MerkleDataType - The value used to generate a hash
      * @param hashAlgorithm HashAlgorithm - hash algorithm to use
-     * @returns {string}
+     * @returns {Promise<string>}
      */
-    static createHash(data: MerkleDataType, hashAlgorithm: HashAlgorithm = HashAlgorithm.sha256): string {
+    static async createHash(data: MerkleDataType, hashAlgorithm: HashAlgorithm = HashAlgorithm.sha256): Promise<string> {
         const dataString: string = this.convertToString(data);
         let algo_dataString: string = '';
 
@@ -113,37 +109,19 @@ export class MerkleHash {
             }
         }
         
-        const hash = crypto.createHash(hashAlgorithm)
-                            .update(dataString)
-                            .digest('hex');
+        const encoder = new TextEncoder();
+        const encodedData = encoder.encode(dataString);
+        const hashBuffer = await crypto.subtle.digest(hashAlgorithm, encodedData);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hash = hashArray
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("");
 
         if (this.ENABLE_CACHING) {
             this.hashCache[algo_dataString] = hash;
         }
 
         return hash;
-    }
-
-    /**
-     * @method createHashFromFile - Static method to be used as utility in order to create a hash from a file of any size
-     * 
-     * @param filePath 
-     * @returns {Promise<string>}
-     */
-    static async createHashFromFile(filePath: string, hashAlgorithm: HashAlgorithm = HashAlgorithm.sha256): Promise<string> {
-        return new Promise((resolve, reject) => {
-            const fileHash = crypto.createHash(hashAlgorithm.toString());
-            const fileStream = createReadStream(filePath);
-            fileStream.on('error', error => {
-                reject(error);
-            });
-            fileStream.on('data', buffer => {
-                fileHash.update(buffer.toString(), 'utf8');
-            });
-            fileStream.on('end', () => {
-                resolve(fileHash.digest('hex'));
-            });
-        });
     }
 
     /**

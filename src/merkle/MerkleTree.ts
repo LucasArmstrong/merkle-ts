@@ -20,9 +20,10 @@ export type MerkleDataType = string | number | boolean | object;
  */
 export interface IMerkleTree {
     root: string;
-    createHash(data: MerkleDataType): string;
+    createHash(data: MerkleDataType): Promise<string>;
     addNode(data: MerkleDataType): void;
     addNodes(dataArray: MerkleDataType[]): void;
+    buildTree(): Promise<void>;
 }
 
 /**
@@ -75,19 +76,16 @@ export class MerkleTree implements IMerkleTree {
     constructor(dataArray: MerkleDataType[], type: HashAlgorithm = HashAlgorithm.sha256) {
         this.type = type;
         this._dataArray = dataArray;
-        this.buildTree();
     }
-
-
 
     /**
      * @method addNode - adds a new data node and rebuilds the tree
      * 
      * @param data 
      */
-    public addNode(data: MerkleDataType): string {
+    public async addNode(data: MerkleDataType): Promise<string> {
         this._dataArray.push(data);
-        this._hashRecords[0].push(this.createHash(data));
+        this._hashRecords[0].push(await this.createHash(data));
 
         let parentIndex = this._dataArray.length-1;
         let leftHash = '';
@@ -96,7 +94,7 @@ export class MerkleTree implements IMerkleTree {
         if (this._dataArray.length <= 2) {
             leftHash = this._hashRecords[0][parentIndex-1];
             rightHash = this._hashRecords[0][parentIndex];
-            const newHash = this.createHash(leftHash + rightHash);
+            const newHash = await this.createHash(leftHash + rightHash);
             this._hashRecords[1] = [newHash];
             this.root = this._hashRecords[1][0];
         } else {
@@ -124,7 +122,7 @@ export class MerkleTree implements IMerkleTree {
                 if (!this._hashRecords[recordIndex]) {
                     this._hashRecords[recordIndex] = [];
                 }
-                this._hashRecords[recordIndex][parentIndex] = this.createHash(leftHash + rightHash);
+                this._hashRecords[recordIndex][parentIndex] = await this.createHash(leftHash + rightHash);
 
                 if (parentIndex === 0) {
                     this.root = this._hashRecords[recordIndex][parentIndex];
@@ -157,12 +155,12 @@ export class MerkleTree implements IMerkleTree {
      * @param data 
      * @returns boolean 
      */
-    public updateNodeAt(index: number, data: MerkleDataType): boolean {
+    public async updateNodeAt(index: number, data: MerkleDataType): Promise<boolean> {
         if (index >= this._dataArray.length) {
             return false;
         }
         this._dataArray[index] = data;
-        this._hashRecords[0][index] = this.createHash(data);
+        this._hashRecords[0][index] = await this.createHash(data);
         for (let i = 1; i < this._hashRecords.length; i++) {
             const previousIndex = index;
             let leftHash = '';
@@ -184,7 +182,7 @@ export class MerkleTree implements IMerkleTree {
                 rightHash = this._hashRecords[i - 1][previousIndex + 1] ?? leftHash;
             }
             
-            this._hashRecords[i][index] = this.createHash(leftHash + rightHash);
+            this._hashRecords[i][index] = await this.createHash(leftHash + rightHash);
 
             if (index === 0) {
                 this.root = this._hashRecords[i][index];
@@ -198,10 +196,10 @@ export class MerkleTree implements IMerkleTree {
      * @method createHash - takes a MerkleDataType payload to generate a
      * 
      * @param data MerkleDataType - The value used to generate a hash
-     * @returns {string}
+     * @returns {Promise<string>}
      */
-    public createHash(data: MerkleDataType): string {
-        return MerkleHash.createHash(data, this.type);
+    public async createHash(data: MerkleDataType): Promise<string> {
+        return await MerkleHash.createHash(data, this.type);
     }
 
     /**
@@ -222,7 +220,7 @@ export class MerkleTree implements IMerkleTree {
      * 
      * @param dataArray MerkleDataType[] - The values used to generate the Merkle Tree
      */
-    private buildTree(): void {
+    public async buildTree(): Promise<void> {
         if (!this._dataArray.length) {
             throw new Error('dataArray has a minimum length of 1');
         }
@@ -233,16 +231,17 @@ export class MerkleTree implements IMerkleTree {
         if (this._dataArray.length > 1) {
             const hashed: string[] = [];
             for (let i = 0; i < this._dataArray.length; i++) {
-                const eleHash = this.createHash(this._dataArray[i]);
+                const eleHash = await this.createHash(this._dataArray[i]);
                 hashed.push(eleHash);
                 this.dataHashIndex[eleHash] = i;
             }
             this._hashRecords.push(hashed);
-            this.root = this.process(hashed);
+            this.root = await this.process(hashed);
         } else if (this._dataArray.length === 1) {
-            this.root = this.createHash(this._dataArray[0]);
+            this.root = await this.createHash(this._dataArray[0]);
             this._hashRecords.push([this.root]);
         }
+
     }
 
     /**
@@ -251,7 +250,7 @@ export class MerkleTree implements IMerkleTree {
      * @param hashArray string[] - Array of hashes to calculate the Merkle Root from
      * @returns {string}
      */
-    private process(hashArray: string[]): string {
+    private async process(hashArray: string[]): Promise<string> {
         if (!hashArray.length) {
             throw new Error('hashArray has a minimum length of 1');
         }
@@ -261,9 +260,9 @@ export class MerkleTree implements IMerkleTree {
         let hashIndex = 0;
         while (hashIndex <= hashArray.length - 1) {
             if (hashArray.length - hashIndex > 1) {
-                hashed.push(this.createHash(hashArray[hashIndex++] + hashArray[hashIndex++]));
+                hashed.push(await this.createHash(hashArray[hashIndex++] + hashArray[hashIndex++]));
             } else if (hashArray.length - hashIndex === 1) {
-                hashed.push(this.createHash(hashArray[hashIndex] + hashArray[hashIndex++]));
+                hashed.push(await this.createHash(hashArray[hashIndex] + hashArray[hashIndex++]));
             }
         }
         
