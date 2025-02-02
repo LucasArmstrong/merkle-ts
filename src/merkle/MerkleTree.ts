@@ -304,4 +304,67 @@ export class MerkleTree implements IMerkleTree {
         return depth;
     }
 
+    /**
+     * @method getProof - Generates a Merkle proof for a given leaf node
+     * 
+     * @param data - The data for which to generate the proof
+     * @returns string[] - An array of hashes that form the proof from the leaf to the root
+     * 
+     * This method traces the path from the specified leaf to the root, collecting
+     * sibling hashes at each level. It uses the tree structure created by buildTree
+     * to ensure the proof corresponds to the actual tree construction. If the data 
+     * isn't in the tree, it throws an error.
+     */
+    public getProof(data: MerkleDataType): string[] {
+        const leafHash = this.createHash(data);
+        const leafIndex = this.dataHashIndex[leafHash];
+        if (leafIndex === undefined) {
+            throw new Error('Data not found in the Merkle tree');
+        }
+    
+        let proof: string[] = [];
+        let currentLevel = 0;
+        let currentIndex = leafIndex;
+    
+        while (currentLevel < this._hashRecords.length - 1) {
+            let siblingIndex = currentIndex ^ 1; // If currentIndex is even, get the next one, otherwise the previous
+            if (siblingIndex < this._hashRecords[currentLevel].length) {
+                proof.push(this._hashRecords[currentLevel][siblingIndex]);
+            } else {
+                // Here we need to mimic what 'process' does in buildTree for odd nodes
+                proof.push(this._hashRecords[currentLevel][currentIndex]); // Use the current hash, not itself for odd cases
+            }
+            currentIndex >>= 1; // Use bitwise operation for division by 2 as in buildTree
+            currentLevel++;
+        }
+        return proof;
+    }
+
+    /**
+     * @method verifyProof - Verifies if the proof for a leaf node matches the Merkle root
+     * 
+     * @param leaf - The leaf node to verify, can be either the data or its hash
+     * @param proof - An array of sibling hashes that make up the proof path
+     * @param root - The expected Merkle root hash to compare against
+     * @param hashType - The hash algorithm used, defaults to SHA-256
+     * @returns boolean - True if the proof is valid and matches the root, false otherwise
+     * 
+     * This static method reconstructs the path from a leaf to the root using the provided
+     * proof. It combines hashes level by level, ensuring each step matches what would be 
+     * expected from the tree structure. If the final hash matches the given root, 
+     * the proof is considered valid.
+     */
+    public static verifyProof(leaf: MerkleDataType | string, proof: string[], root: string, hashType: HashAlgorithm = HashAlgorithm.sha256): boolean {
+        let hash = typeof leaf === 'string' ? leaf : MerkleHash.createHash(leaf, hashType);
+        for (let i = 0; i < proof.length; i++) {
+            const sibling = proof[i];
+            if (i % 2 === 0) { // Left
+                hash = MerkleHash.createHash(hash + sibling, hashType);
+            } else { // Right
+                hash = MerkleHash.createHash(sibling + hash, hashType);
+            }
+        }
+        return hash === root;
+    }
+
 }
